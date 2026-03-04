@@ -1,6 +1,12 @@
 export interface CompareRequest {
   prompt: string;
   models: string[];
+  advancedOptions?: {
+    llmAsJudge?: boolean;
+    similarityScore?: boolean;
+    jsonValidation?: boolean;
+    deterministic?: boolean;
+  };
 }
 
 export interface ModelResponse {

@@ -1,9 +1,7 @@
-import { CompareRequest, ModelResponse } from '../types/model';
+import { ModelResponse, CompareRequest } from '../types/model';
 
 export async function compareModels(request: CompareRequest): Promise<ModelResponse[]> {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-  
-  const response = await fetch(`${apiUrl}/compare`, {
+  const response = await fetch('/api/compare', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
