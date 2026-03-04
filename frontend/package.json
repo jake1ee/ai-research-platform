@@ -11,12 +11,21 @@
     "dev:all": "concurrently \"npm run dev\" \"npm run backend\""
   },
   "dependencies": {
+    "@google/genai": "^1.43.0",
+    "@radix-ui/react-accordion": "^1.2.12",
+    "@radix-ui/react-alert-dialog": "^1.1.15",
+    "@radix-ui/react-aspect-ratio": "^1.1.8",
+    "@radix-ui/react-avatar": "^1.1.11",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.34.4",
     "lucide-react": "^0.576.0",
     "next": "16.1.6",
+    "radius-ui": "^0.0.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-router-dom": "^7.13.1",
+    "recharts": "^3.7.0",
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
