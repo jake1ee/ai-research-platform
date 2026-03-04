@@ -1,15 +1,19 @@
 'use client';
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
-import { 
-  Sparkles, Play, Mic, Edit, Link as LinkIcon, CheckCircle2, 
+import {
+  Sparkles, Play, Mic, Edit, Link as LinkIcon, CheckCircle2,
   LayoutGrid, Zap, BarChart3, Shield, Code2, LineChart, Users, X,
   ArrowRight, BookOpen, AlertTriangle, CheckCircle, SplitSquareHorizontal,
   Activity, DollarSign, FileJson, Scale, Layers, Download, History,
-  Terminal, Briefcase, GraduationCap, Cpu, Network, Settings2, Clock, Hash
+  Terminal, Briefcase, GraduationCap, Cpu, Network, Settings2, Clock, Hash,
+  ChevronDown, LogOut, LayoutDashboard,
 } from "lucide-react";
+import { AuthModal } from "../components/AuthModal";
+import { Logo } from "../components/Logo";
+import { useAuth } from "../components/AuthContext";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -22,6 +26,11 @@ const staggerContainer: Variants = {
 };
 
 export function LandingPage() {
+  const { user, logout } = useAuth();
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authView, setAuthView] = useState<'signin' | 'signup'>('signin');
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
     const element = document.getElementById(id);
@@ -30,30 +39,115 @@ export function LandingPage() {
     }
   };
 
+  const openAuth = (view: 'signin' | 'signup') => {
+    setAuthView(view);
+    setIsAuthModalOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-zinc-300 font-sans selection:bg-indigo-500/30">
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        initialView={authView} 
+      />
       {/* Navbar */}
       <nav className="w-full border-b border-white/5 bg-[#0A0A0A]/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-              <LayoutGrid className="w-4 h-4 text-black" />
-            </div>
-            <span className="text-lg font-bold tracking-tight text-white">ModelCompare</span>
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center">
+          {/* Left - fixed width */}
+          <div className="flex items-center gap-2 w-1/3">
+            <a 
+              href="#" 
+              onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className="cursor-pointer"
+            >
+              <Logo className="h-8 text-white" />
+            </a>
           </div>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
+
+          {/* Center - truly centered */}
+          <div className="hidden md:flex items-center justify-center gap-8 text-sm font-medium text-zinc-400 w-1/3">
             <a href="#problem" onClick={(e) => scrollToSection(e, 'problem')} className="hover:text-white transition-colors">Problem</a>
             <a href="#solution" onClick={(e) => scrollToSection(e, 'solution')} className="hover:text-white transition-colors">Solution</a>
             <a href="#features" onClick={(e) => scrollToSection(e, 'features')} className="hover:text-white transition-colors">Features</a>
             <a href="#pricing" onClick={(e) => scrollToSection(e, 'pricing')} className="hover:text-white transition-colors">Pricing</a>
           </div>
-          <div className="flex items-center gap-4">
-            <Link href="/Dashboard" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden md:block">
-              Dashboard
-            </Link>
-            <Link href="/compare" className="text-sm font-medium bg-white text-black px-5 py-2 rounded-full hover:bg-zinc-200 transition-colors">
-              Start Comparing
-            </Link>
+
+          {/* Right - fixed width, right-aligned */}
+          <div className="flex items-center justify-end gap-4 w-1/3">
+            {user ? (
+              /* ── Logged-in: profile dropdown ── */
+              <div className="relative">
+                <button
+                  onClick={() => setProfileMenuOpen((o) => !o)}
+                  className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-zinc-200 hover:bg-white/10 transition-colors"
+                >
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
+                    {user.avatarInitials}
+                  </div>
+                  <span className="hidden md:block">{user.name}</span>
+                  <ChevronDown className="h-3.5 w-3.5 text-zinc-500" />
+                </button>
+
+                {profileMenuOpen && (
+                  <>
+                    {/* Backdrop */}
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => setProfileMenuOpen(false)}
+                    />
+                    {/* Dropdown */}
+                    <div className="absolute right-0 z-50 mt-2 w-48 rounded-xl border border-white/10 bg-[#141414] py-1 shadow-xl">
+                      <div className="border-b border-white/10 px-4 py-2.5">
+                        <p className="text-xs font-semibold text-white">{user.name}</p>
+                        <p className="text-[11px] text-zinc-500">{user.email}</p>
+                      </div>
+                      <Link
+                        href="/Dashboard"
+                        onClick={() => setProfileMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
+                      >
+                        <LayoutDashboard className="h-4 w-4 text-zinc-500" />
+                        Dashboard
+                      </Link>
+                      <Link
+                        href="/profile"
+                        onClick={() => setProfileMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
+                      >
+                        <LayoutGrid className="h-4 w-4 text-zinc-500" />
+                        Profile
+                      </Link>
+                      <div className="border-t border-white/10 mt-1">
+                        <button
+                          onClick={() => { setProfileMenuOpen(false); logout(); }}
+                          className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-zinc-400 hover:bg-white/5 hover:text-red-400 transition-colors"
+                        >
+                          <LogOut className="h-4 w-4" />
+                          Sign out
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : (
+              /* ── Logged-out: sign in + CTA ── */
+              <>
+                <button
+                  onClick={() => openAuth('signin')}
+                  className="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden md:block"
+                >
+                  Sign In
+                </button>
+                <Link
+                  href="/compare"
+                  className="text-sm font-medium bg-white text-black px-5 py-2 rounded-full hover:bg-zinc-200 transition-colors"
+                >
+                  Start Comparing
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -291,67 +385,81 @@ export function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto items-center">
+            
             {/* Free */}
-            <div className="p-8 rounded-3xl border border-white/10 bg-white/5">
-              <h3 className="text-xl font-bold text-white mb-2">Free</h3>
-              <p className="text-sm text-zinc-400 mb-6">For individuals exploring models.</p>
-              <div className="mb-8">
-                <span className="text-5xl font-bold text-white">$0</span>
-                <span className="text-zinc-500">/mo</span>
+            <div className="group relative p-8 rounded-3xl border border-white/10 bg-white/5 h-130 flex flex-col cursor-pointer transition-all duration-300 hover:border-white/30 hover:bg-white/10 hover:shadow-[0_0_30px_-8px_rgba(255,255,255,0.15)] hover:-translate-y-1">
+              <div>
+                <h3 className="text-xl font-bold text-white mb-2">Free</h3>
+                <p className="text-sm text-zinc-400 mb-6">For individuals exploring models.</p>
+                <div className="mb-8">
+                  <span className="text-5xl font-bold text-white">$0</span>
+                  <span className="text-zinc-500">/mo</span>
+                </div>
+                <ul className="space-y-4 text-sm text-zinc-300">
+                  <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-white shrink-0" /> 100 comparisons / month</li>
+                  <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-white shrink-0" /> Up to 3 parallel models</li>
+                  <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-white shrink-0" /> Basic latency & cost tracking</li>
+                </ul>
               </div>
-              <ul className="space-y-4 mb-8 text-sm text-zinc-300">
-                <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-white" /> 100 comparisons / month</li>
-                <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-white" /> Up to 3 parallel models</li>
-                <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-white" /> Basic latency & cost tracking</li>
-              </ul>
-              <button className="w-full py-3 rounded-full border border-white/20 text-white font-medium hover:bg-white/10 transition-colors">
-                Get Started
-              </button>
+              <div className="mt-auto pt-8">
+                <button className="w-full py-3 rounded-full border border-white/20 text-white font-medium transition-all duration-200 group-hover:border-white/50 group-hover:bg-white/10 active:scale-95">
+                  Get Started
+                </button>
+              </div>
             </div>
 
             {/* Pro */}
-            <div className="p-8 rounded-3xl border border-indigo-500 bg-indigo-500/10 relative transform md:-translate-y-4 shadow-[0_0_40px_-10px_rgba(99,102,241,0.3)]">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-indigo-500 text-white px-4 py-1 rounded-full text-xs font-bold tracking-wide">
+            <div className="group relative p-8 rounded-3xl border border-indigo-500 bg-indigo-500/10 h-140 flex flex-col cursor-pointer shadow-[0_0_40px_-10px_rgba(99,102,241,0.3)] transition-all duration-300 hover:shadow-[0_0_60px_-8px_rgba(99,102,241,0.5)] hover:bg-indigo-500/20 hover:border-indigo-400 hover:-translate-y-1">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-indigo-500 text-white px-4 py-1 rounded-full text-xs font-bold tracking-wide whitespace-nowrap">
                 Most Popular
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">Pro</h3>
-              <p className="text-sm text-indigo-200 mb-6">For professional AI engineers.</p>
-              <div className="mb-8">
-                <span className="text-5xl font-bold text-white">$49</span>
-                <span className="text-indigo-300">/mo</span>
+              <div>
+                <h3 className="text-xl font-bold text-white mb-2">Pro</h3>
+                <p className="text-sm text-indigo-200 mb-6">For professional AI engineers.</p>
+                <div className="mb-8">
+                  <span className="text-5xl font-bold text-white">$49</span>
+                  <span className="text-indigo-300">/mo</span>
+                </div>
+                <ul className="space-y-4 text-sm text-zinc-300">
+                  <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-indigo-400 shrink-0" /> Unlimited comparisons</li>
+                  <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-indigo-400 shrink-0" /> Up to 10 parallel models</li>
+                  <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-indigo-400 shrink-0" /> Full analytics & history</li>
+                  <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-indigo-400 shrink-0" /> LLM-as-a-Judge scoring</li>
+                  <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-indigo-400 shrink-0" /> CSV/JSON Export</li>
+                </ul>
               </div>
-              <ul className="space-y-4 mb-8 text-sm text-zinc-300">
-                <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-indigo-400" /> Unlimited comparisons</li>
-                <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-indigo-400" /> Up to 10 parallel models</li>
-                <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-indigo-400" /> Full analytics & history</li>
-                <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-indigo-400" /> LLM-as-a-Judge scoring</li>
-                <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-indigo-400" /> CSV/JSON Export</li>
-              </ul>
-              <button className="w-full py-3 rounded-full bg-indigo-500 text-white font-medium hover:bg-indigo-600 transition-colors">
-                Start 14-Day Trial
-              </button>
+              <div className="mt-auto pt-8">
+                <button className="w-full py-3 rounded-full bg-indigo-500 text-white font-medium transition-all duration-200 hover:bg-indigo-400 active:scale-95 group-hover:shadow-[0_0_20px_-4px_rgba(99,102,241,0.6)]">
+                  Start 14-Day Trial
+                </button>
+              </div>
             </div>
 
             {/* Enterprise */}
-            <div className="p-8 rounded-3xl border border-white/10 bg-white/5">
-              <h3 className="text-xl font-bold text-white mb-2">Enterprise</h3>
-              <p className="text-sm text-zinc-400 mb-6">For teams scaling AI in production.</p>
-              <div className="mb-8">
-                <span className="text-5xl font-bold text-white">$249</span>
-                <span className="text-zinc-500">/mo</span>
+            <div className="group relative p-8 rounded-3xl border border-white/10 bg-white/5 h-130 flex flex-col cursor-pointer transition-all duration-300 hover:border-white/30 hover:bg-white/10 hover:shadow-[0_0_30px_-8px_rgba(255,255,255,0.15)] hover:-translate-y-1">
+              <div>
+                <h3 className="text-xl font-bold text-white mb-2">Enterprise</h3>
+                <p className="text-sm text-zinc-400 mb-6">For teams scaling AI in production.</p>
+                <div className="mb-8">
+                  <span className="text-5xl font-bold text-white">$249</span>
+                  <span className="text-zinc-500">/mo</span>
+                </div>
+                <ul className="space-y-4 text-sm text-zinc-300">
+                  <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-white shrink-0" /> Everything in Pro</li>
+                  <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-white shrink-0" /> Team workspace & sharing</li>
+                  <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-white shrink-0" /> API Access for CI/CD</li>
+                  <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-white shrink-0" /> Custom model endpoints</li>
+                  <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-white shrink-0" /> Priority support</li>
+                </ul>
               </div>
-              <ul className="space-y-4 mb-8 text-sm text-zinc-300">
-                <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-white" /> Everything in Pro</li>
-                <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-white" /> Team workspace & sharing</li>
-                <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-white" /> API Access for CI/CD</li>
-                <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-white" /> Custom model endpoints</li>
-                <li className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-white" /> Priority support</li>
-              </ul>
-              <button className="w-full py-3 rounded-full border border-white/20 text-white font-medium hover:bg-white/10 transition-colors">
-                Contact Sales
-              </button>
+              <div className="mt-auto pt-8">
+                <button className="w-full py-3 rounded-full border border-white/20 text-white font-medium transition-all duration-200 group-hover:border-white/50 group-hover:bg-white/10 active:scale-95">
+                  Contact Sales
+                </button>
+              </div>
             </div>
+
           </div>
         </div>
       </section>
@@ -389,7 +497,7 @@ export function LandingPage() {
           </div>
           
           <p className="text-sm text-zinc-600">
-            © {new Date().getFullYear()} ModelCompare. All rights reserved.
+            © {new Date().getFullYear()} Inferra. All rights reserved.
           </p>
         </div>
       </footer>
