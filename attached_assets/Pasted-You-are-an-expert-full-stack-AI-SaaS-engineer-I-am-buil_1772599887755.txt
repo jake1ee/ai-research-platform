@@ -1,0 +1,55 @@
+You are an expert full-stack AI SaaS engineer. I am building a professional AI model evaluation platform called “ModelCompare” with the following specs:
+
+**Goal:** 
+- Compare multiple LLMs side-by-side with metrics such as latency, cost, token usage, output quality, structured output reliability, and determinism.  
+- Provide benchmarking, structured validation, and automated scoring (LLM-as-a-Judge).  
+- Production-ready SaaS with enterprise features, analytics, and API access.  
+
+**Tech Stack:**
+- Frontend: Next.js 14 (App Router), TypeScript, TailwindCSS
+- Backend: FastAPI + LiteLLM
+- Database: PostgreSQL or MongoDB
+- Task queue: Redis + Celery
+- Billing: Stripe usage-based billing
+
+**Feature Requirements:**
+1. Landing Page: Premium SaaS design with hero, problem, solution, feature grid, pricing, and CTA sections.
+2. Evaluation Lab Page: Prompt input, model selector, advanced options, results panel, charts, quality analysis, export, and history.
+3. User System: JWT auth, dashboard, usage tracking, rate limits.
+4. Billing: Stripe integration, usage-based billing, cost tracking, monthly reports.
+5. Analytics: Latency, token usage, cost over time, model performance.
+6. Engineering Features: Model fallback, retries, error categorization, timeout, caching, request queue.
+7. Research Features: Prompt versioning, A/B testing, multi-run benchmarking, deterministic testing.
+8. Enterprise Features: Team workspace, shared evaluations, role-based access, API key management.
+
+**Tasks:**
+- Provide a **full project architecture diagram**, including frontend, backend, database, task queue, caching, monitoring, and API.
+- Generate **Next.js + Tailwind code** for both the Landing Page and Evaluation Lab page with all UI sections, charts, badges, and controls.
+- Generate **FastAPI backend code** for:
+  - Model execution engine
+  - Metrics calculation (latency, token count, cost)
+  - LLM-as-a-Judge scoring
+  - JSON / structured output validation
+  - Evaluation history management
+- Provide **database schema** for users, prompts, evaluations, models, and billing.
+- Generate **async evaluation pipeline** with Celery/Redis for multi-model parallel execution.
+- Generate **utility functions** for token counting, cost calculation, latency benchmarking, and deterministic testing.
+- Include **API routes** for frontend interaction and future public API access.
+- Suggest **automation features** for running scheduled benchmarks, diffing previous results, and generating reports.
+
+**Output Style:**
+- Produce **ready-to-use code snippets**, structured explanations, and diagrams where relevant.
+- Make it **production-ready**, maintainable, and modular.
+- Provide comments explaining functionality for each code section.
+- Include examples for frontend/backend interaction with sample LLM calls.
+
+**Constraints & Notes:**
+- Must support multiple LLM providers (OpenAI, Claude, Cohere, local LiteLLM models).
+- Structured output enforcement should validate JSON or YAML output.
+- Include badges (Fastest, Cheapest, Best Quality) automatically.
+- Charts should be dynamic and responsive (preferably using Recharts or Chart.js).
+- Ensure proper separation of user-specific data and team workspace data.
+- Include role-based access for Enterprise plans.
+
+**Your Task:**
+Generate a **comprehensive implementation plan and code starter kit** for the entire ModelCompare SaaS based on the above requirements.
