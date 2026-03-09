@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Copy, RefreshCw, ChevronDown, ChevronUp, Activity } from 'lucide-react';
-import { ModelResponse } from '@/app/types/model';
+import { ModelResponse } from '@/types/api';
 
 interface DashboardResultCardProps {
   result: ModelResponse;

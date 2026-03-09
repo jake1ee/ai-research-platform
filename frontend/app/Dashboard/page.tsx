@@ -23,10 +23,10 @@ import {
   ScatterChart, Scatter,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
-import { KPICard }           from '../components/dashboard/KPICard';
-import { ChartCard }         from '../components/dashboard/ChartCard';
-import { EvaluationTable, type EvaluationRow } from '../components/dashboard/EvaluationTable';
-import { WorkspaceSwitcher, type Workspace }    from '../components/dashboard/WorkspaceSwitcher';
+import { KPICard }           from '@/features/dashboard/components/KPICard';
+import { ChartCard }         from '@/features/dashboard/components/ChartCard';
+import { EvaluationTable, type EvaluationRow } from '@/features/dashboard/components/EvaluationTable';
+import { WorkspaceSwitcher, type Workspace }    from '@/features/dashboard/components/WorkspaceSwitcher';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Mock data  (replace with Supabase analytics queries)

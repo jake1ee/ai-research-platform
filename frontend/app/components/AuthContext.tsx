@@ -1,83 +1,70 @@
-'use client';
-
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-export interface AuthUser {
-  id: string;
-  email: string;
-  name: string;
-  planTier: 'free' | 'pro' | 'enterprise';
-  avatarInitials: string;
-}
+import { createContext, useContext, useEffect, useState } from 'react'
+import { supabase } from '../lib/supabase'
+import type { Session, User } from '@supabase/supabase-js'
 
 interface AuthContextType {
-  user: AuthUser | null;
-  isLoading: boolean;
-  login: (email: string, name: string) => void;
-  logout: () => void;
+  user: User | null
+  session: Session | null
+  signUp: (email: string, password: string, name: string) => Promise<void>
+  signIn: (email: string, password: string) => Promise<void>
+  signOut: () => Promise<void>
+  getToken: () => string | null
 }
 
-// ─── Context ──────────────────────────────────────────────────────────────────
+const AuthContext = createContext<AuthContextType | null>(null)
 
-const AuthContext = createContext<AuthContextType | null>(null);
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null)
+  const [session, setSession] = useState<Session | null>(null)
 
-const STORAGE_KEY = 'inferra_user';
-
-// ─── Provider ─────────────────────────────────────────────────────────────────
-
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
-
-  // Rehydrate session from localStorage on mount
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) setUser(JSON.parse(stored));
-    } catch {
-      // corrupted storage — ignore
-    }
-    setIsLoading(false);
-  }, []);
+    // Restore session on mount
+   supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session)
+      setUser(data.session?.user ?? null)
+    })
 
-  function login(email: string, name: string) {
-    const displayName = name.trim() || email.split('@')[0];
-    const initials = displayName.slice(0, 2).toUpperCase();
+    // Listen for auth changes (login, logout, token refresh)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+      setUser(session?.user ?? null)
+    })
 
-    const newUser: AuthUser = {
-      id: crypto.randomUUID(),
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const signUp = async (email: string, password: string, name: string) => {
+    const { error } = await supabase.auth.signUp({
       email,
-      name: displayName,
-      planTier: 'free',
-      avatarInitials: initials,
-    };
-
-    setUser(newUser);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
-    router.push('/Dashboard');
+      password,
+      options: {
+        data: { name }  // stored in user_metadata — your backend reads this
+      }
+    })
+    if (error) throw error
   }
 
-  function logout() {
-    setUser(null);
-    localStorage.removeItem(STORAGE_KEY);
-    router.push('/');
+  const signIn = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) throw error
   }
+
+  const signOut = async () => {
+    await supabase.auth.signOut()
+  }
+
+  // Use this to attach the token to every API call
+  const getToken = () => session?.access_token ?? null
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, session, signUp, signIn, signOut, getToken }}>
       {children}
     </AuthContext.Provider>
-  );
+  )
 }
 
-// ─── Hook ─────────────────────────────────────────────────────────────────────
-
-export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used inside <AuthProvider>');
-  return ctx;
+export const useAuth = () => {
+  const ctx = useContext(AuthContext)
+  if (!ctx) throw new Error('useAuth must be used within AuthProvider')
+  return ctx
 }

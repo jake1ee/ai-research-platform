@@ -21,11 +21,11 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { Download, Link2, Check, LayoutGrid, Rows } from 'lucide-react';
-import { PromptPanel, type EvalConfig, estimateTokens } from '../components/compare/PromptPanel';
-import { ModelResultCard, type ModelResult, type ResultStatus } from '../components/compare/ModelResultCard';
-import { MetricsPanel } from '../components/compare/MetricsPanel';
-import { DEFAULT_MODELS } from '../components/compare/ModelSelector';
-import type { BadgeVariant } from '../components/compare/Badge';
+import { PromptPanel, type EvalConfig, estimateTokens } from '@/features/compare/components/PromptPanel';
+import { ModelResultCard, type ModelResult, type ResultStatus } from '@/features/compare/components/ModelResultCard';
+import { MetricsPanel } from '@/features/compare/components/MetricsPanel';
+import { DEFAULT_MODELS } from '@/features/compare/components/ModelSelector';
+import type { BadgeVariant } from '@/features/compare/components/Badge';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Default config

@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { DashboardResultCard } from './DashboardResultCard';
-import { ModelResponse } from '@/app/types/model';
+import { ModelResponse } from '@/types/api';
 
 interface ResultsSectionProps {
   results: ModelResponse[];

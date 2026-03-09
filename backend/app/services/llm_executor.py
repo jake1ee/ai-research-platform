@@ -1,0 +1,116 @@
+"""
+Async parallel LLM execution via LiteLLM.
+
+Import pattern:
+    from app.services.llm_executor import execute_models_parallel, ModelCallResult
+"""
+
+import asyncio
+import time
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
+
+import litellm
+from litellm import acompletion
+
+from app.core.config import settings
+from app.utils.cost_calculator import calculate_cost
+
+
+@dataclass
+class ModelCallResult:
+    """All metrics captured from one model invocation."""
+    model_id: str
+
+    output: Optional[str] = None
+    input_tokens: int = 0
+    output_tokens: int = 0
+    latency_ms: float = 0.0
+    cost_usd: float = 0.0
+
+    error: Optional[str] = None
+    raw_response: Optional[Any] = None
+
+
+async def _call_single_model(
+    model_id: str,
+    messages: List[Dict[str, str]],
+    temperature: float,
+    seed: Optional[int],
+    timeout: int,
+) -> ModelCallResult:
+    kwargs: Dict[str, Any] = {
+        "model": model_id,
+        "messages": messages,
+        "temperature": temperature,
+        "timeout": timeout,
+    }
+    if seed is not None:
+        kwargs["seed"] = seed
+
+    start = time.monotonic()
+    try:
+        response = await acompletion(**kwargs)
+        latency_ms = (time.monotonic() - start) * 1000
+
+        output = response.choices[0].message.content or ""
+        usage = response.usage or {}
+        input_tokens = getattr(usage, "prompt_tokens", 0) or 0
+        output_tokens = getattr(usage, "completion_tokens", 0) or 0
+        cost = calculate_cost(model_id, input_tokens, output_tokens)
+
+        return ModelCallResult(
+            model_id=model_id,
+            output=output,
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            latency_ms=round(latency_ms, 2),
+            cost_usd=cost,
+            raw_response=response,
+        )
+
+    except asyncio.TimeoutError:
+        latency_ms = (time.monotonic() - start) * 1000
+        return ModelCallResult(
+            model_id=model_id,
+            latency_ms=round(latency_ms, 2),
+            error=f"Timeout after {timeout}s",
+        )
+    except Exception as exc:
+        latency_ms = (time.monotonic() - start) * 1000
+        return ModelCallResult(
+            model_id=model_id,
+            latency_ms=round(latency_ms, 2),
+            error=str(exc),
+        )
+
+
+async def execute_models_parallel(
+    prompt: str,
+    model_ids: List[str],
+    system_prompt: Optional[str] = None,
+    deterministic_seed: Optional[int] = None,
+    timeout: Optional[int] = None,
+) -> List[ModelCallResult]:
+    """Fan out prompt to all model_ids simultaneously and collect results."""
+    temperature = 0.0 if deterministic_seed is not None else 1.0
+    timeout = timeout or settings.LLM_TIMEOUT_SECONDS
+
+    messages: List[Dict[str, str]] = []
+    if system_prompt:
+        messages.append({"role": "system", "content": system_prompt})
+    messages.append({"role": "user", "content": prompt})
+
+    tasks = [
+        _call_single_model(
+            model_id=model_id,
+            messages=messages,
+            temperature=temperature,
+            seed=deterministic_seed,
+            timeout=timeout,
+        )
+        for model_id in model_ids
+    ]
+
+    results = await asyncio.gather(*tasks)
+    return list(results)
