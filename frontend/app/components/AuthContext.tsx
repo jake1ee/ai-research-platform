@@ -1,3 +1,5 @@
+'use client'
+
 import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Session, User } from '@supabase/supabase-js'
@@ -5,26 +7,36 @@ import type { Session, User } from '@supabase/supabase-js'
 interface AuthContextType {
   user: User | null
   session: Session | null
+  isInitializing: boolean
   signUp: (email: string, password: string, name: string) => Promise<void>
   signIn: (email: string, password: string) => Promise<void>
+  signInWithOAuth: (provider: 'google' | 'github', redirectPath?: string) => Promise<void>
   signOut: () => Promise<void>
   getToken: () => string | null
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
+const MIN_INIT_MS = 1200 // minimum loading screen duration on app boot
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
+  const [isInitializing, setIsInitializing] = useState(true)
 
   useEffect(() => {
-    // Restore session on mount
-   supabase.auth.getSession().then(({ data }) => {
+    const start = Date.now()
+
+    supabase.auth.getSession().then(({ data }) => {
       setSession(data.session)
       setUser(data.session?.user ?? null)
+
+      // Hold the loading screen for at least MIN_INIT_MS ms so it feels intentional
+      const elapsed = Date.now() - start
+      const remaining = Math.max(0, MIN_INIT_MS - elapsed)
+      setTimeout(() => setIsInitializing(false), remaining)
     })
 
-    // Listen for auth changes (login, logout, token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
       setUser(session?.user ?? null)
@@ -37,9 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: { name }  // stored in user_metadata — your backend reads this
-      }
+      options: { data: { name } }
     })
     if (error) throw error
   }
@@ -49,15 +59,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error
   }
 
+  const signInWithOAuth = async (provider: 'google' | 'github', redirectPath = '/onboarding') => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: `${window.location.origin}${redirectPath}` }
+    })
+    if (error) throw error
+  }
+
   const signOut = async () => {
     await supabase.auth.signOut()
   }
 
-  // Use this to attach the token to every API call
   const getToken = () => session?.access_token ?? null
 
   return (
-    <AuthContext.Provider value={{ user, session, signUp, signIn, signOut, getToken }}>
+    <AuthContext.Provider value={{ user, session, isInitializing, signUp, signIn, signInWithOAuth, signOut, getToken }}>
       {children}
     </AuthContext.Provider>
   )

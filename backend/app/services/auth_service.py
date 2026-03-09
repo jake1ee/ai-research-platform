@@ -6,12 +6,10 @@ Import pattern:
     from app.services.auth_service import signup_user, login_user, logout_user, refresh_session
 """
 
-from datetime import datetime, timezone
-
 from fastapi import HTTPException, status
 from gotrue.errors import AuthApiError
 
-from app.core.supabase.client import _build_admin_client
+from app.core.supabase.client import _build_admin_client, _build_anon_client
 from app.schemas.auth import AuthResponse, LoginRequest, SignupRequest, UserProfile
 
 
@@ -23,7 +21,7 @@ def _build_auth_response(session, profile: dict) -> AuthResponse:
         user=UserProfile(
             id=profile["id"],
             email=profile["email"],
-            full_name=profile["full_name"],
+            full_name=profile.get("full_name", ""),
             avatar_url=profile.get("avatar_url"),
             plan=profile.get("plan", "free"),
             created_at=profile["created_at"],
@@ -31,19 +29,34 @@ def _build_auth_response(session, profile: dict) -> AuthResponse:
     )
 
 
+def _fetch_profile(client, user_id: str) -> dict:
+    """Fetch a row from public.profiles by id. Raises 404 if missing."""
+    resp = (
+        client.table("profiles")
+        .select("*")
+        .eq("id", user_id)
+        .single()
+        .execute()
+    )
+    if not resp.data:
+        raise HTTPException(status_code=404, detail="User profile not found")
+    return resp.data
+
+
 def signup_user(body: SignupRequest) -> AuthResponse:
     """
-    1. Create Supabase Auth user.
-    2. Insert public.profiles row.
+    1. Sign up via the standard auth endpoint (not admin) to avoid 'User not allowed'.
+    2. Upsert into public.profiles.
     3. Return session tokens + profile.
     """
-    client = _build_admin_client()
+    anon_client = _build_anon_client()
+    admin_client = _build_admin_client()
+
     try:
-        auth_resp = client.auth.admin.create_user({
+        auth_resp = anon_client.auth.sign_up({
             "email": body.email,
             "password": body.password,
-            "user_metadata": {"full_name": body.full_name},
-            "email_confirm": True,
+            "options": {"data": {"full_name": body.full_name}},
         })
     except AuthApiError as exc:
         msg = str(exc).lower()
@@ -55,31 +68,38 @@ def signup_user(body: SignupRequest) -> AuthResponse:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
 
     auth_user = auth_resp.user
-    now = datetime.now(timezone.utc).isoformat()
+    if not auth_user:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Signup failed")
 
-    profile = {
+    # Upsert so we don't fail if a DB trigger already created the row.
+    profile_data = {
         "id": str(auth_user.id),
         "email": body.email,
         "full_name": body.full_name,
         "avatar_url": None,
         "plan": "free",
-        "created_at": now,
     }
-
     try:
-        client.table("profiles").insert(profile).execute()
+        admin_client.table("profiles").upsert(profile_data).execute()
     except Exception as exc:
         try:
-            client.auth.admin.delete_user(str(auth_user.id))
+            admin_client.auth.admin.delete_user(str(auth_user.id))
         except Exception:
             pass
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to create user profile",
+            detail=f"Failed to create user profile: {exc}",
         ) from exc
 
-    sign_in = client.auth.sign_in_with_password({"email": body.email, "password": body.password})
-    return _build_auth_response(sign_in.session, profile)
+    # If email confirmation is disabled, sign_up already returns a session.
+    # Otherwise fall back to sign_in_with_password.
+    session = auth_resp.session
+    if not session:
+        sign_in = admin_client.auth.sign_in_with_password({"email": body.email, "password": body.password})
+        session = sign_in.session
+
+    profile = _fetch_profile(admin_client, str(auth_user.id))
+    return _build_auth_response(session, profile)
 
 
 def login_user(body: LoginRequest) -> AuthResponse:
@@ -96,21 +116,8 @@ def login_user(body: LoginRequest) -> AuthResponse:
             headers={"WWW-Authenticate": "Bearer"},
         ) from exc
 
-    session = auth_resp.session
-    auth_user = auth_resp.user
-
-    profile_resp = (
-        client.table("profiles")
-        .select("*")
-        .eq("id", str(auth_user.id))
-        .single()
-        .execute()
-    )
-    profile = profile_resp.data
-    if not profile:
-        raise HTTPException(status_code=404, detail="User profile not found")
-
-    return _build_auth_response(session, profile)
+    profile = _fetch_profile(client, str(auth_resp.user.id))
+    return _build_auth_response(auth_resp.session, profile)
 
 
 def logout_user(token: str) -> None:
@@ -132,18 +139,5 @@ def refresh_session(refresh_token: str) -> AuthResponse:
             detail="Refresh token is invalid or expired",
         ) from exc
 
-    session = resp.session
-    auth_user = resp.user
-
-    profile_resp = (
-        client.table("profiles")
-        .select("*")
-        .eq("id", str(auth_user.id))
-        .single()
-        .execute()
-    )
-    profile = profile_resp.data
-    if not profile:
-        raise HTTPException(status_code=404, detail="User profile not found")
-
-    return _build_auth_response(session, profile)
+    profile = _fetch_profile(client, str(resp.user.id))
+    return _build_auth_response(resp.session, profile)

@@ -242,7 +242,7 @@ export function MetricsPanel({ results }: MetricsPanelProps) {
   const fastestModel = shortName(results.find((r) => r.badges.includes('fastest'))?.modelId ?? '');
 
   return (
-    <div className="h-full overflow-y-auto bg-zinc-900">
+    <div className="h-full overflow-y-auto bg-zinc-900 dark-scroll">
 
       {/* ── Summary strip ────────────────────────────────────────────── */}
       <PanelSection title="Summary">

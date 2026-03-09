@@ -10,7 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Logo } from '@/components/ui/Logo';
 
 const NAV_ITEMS = [
-  { href: '/dashboard', label: 'Dashboard',  icon: LayoutDashboard },
+  { href: '/Dashboard', label: 'Dashboard',  icon: LayoutDashboard },
   { href: '/compare',   label: 'Compare',    icon: SplitSquareHorizontal },
   { href: '/history',   label: 'History',    icon: History },
   { href: '/settings',  label: 'Settings',   icon: Settings },
@@ -38,8 +38,8 @@ export function Sidebar() {
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active =
-            pathname === href ||
-            (href !== '/' && pathname.startsWith(href));
+            pathname.toLowerCase() === href.toLowerCase() ||
+            (href !== '/' && pathname.toLowerCase().startsWith(href.toLowerCase()));
 
           return (
             <Link

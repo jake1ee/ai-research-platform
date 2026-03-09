@@ -198,7 +198,7 @@ export default function ComparePage() {
   const hasResults = results.length > 0;
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-zinc-950">
+    <div className="flex h-full flex-col overflow-hidden bg-zinc-950">
 
       {/* ── Top bar ───────────────────────────────────────────────────────── */}
       <header className="flex shrink-0 items-center justify-between border-b border-zinc-800 px-5 py-3">
@@ -261,7 +261,7 @@ export default function ComparePage() {
       <div className="flex flex-1 overflow-hidden">
 
         {/* LEFT – Configuration */}
-        <aside className="w-80 shrink-0 overflow-hidden border-r border-zinc-800">
+        <aside className="w-80 shrink-0 flex flex-col border-r border-zinc-800">
           <PromptPanel
             config={config}
             onChange={patchConfig}
@@ -293,7 +293,7 @@ export default function ComparePage() {
             </div>
           ) : (
             /* Result grid */
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex-1 overflow-y-auto p-4 dark-scroll">
               <div
                 className={
                   layout === 'grid'
@@ -323,7 +323,7 @@ export default function ComparePage() {
         </main>
 
         {/* RIGHT – Metrics intelligence */}
-        <aside className="w-80 shrink-0 overflow-hidden border-l border-zinc-800">
+        <aside className="w-80 shrink-0 flex flex-col border-l border-zinc-800">
           <MetricsPanel results={results} />
         </aside>
       </div>

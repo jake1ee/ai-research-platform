@@ -134,7 +134,7 @@ function ExpandModal({
             <X className="h-5 w-5" />
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto p-5">
+        <div className="flex-1 overflow-y-auto p-5 dark-scroll">
           <pre className="whitespace-pre-wrap font-mono text-sm text-zinc-200 leading-relaxed">
             {output}
           </pre>
@@ -238,7 +238,7 @@ export function ModelResultCard({ result, onRetry }: ModelResultCardProps) {
             </div>
           ) : (
             /* Output text */
-            <div className="h-full overflow-y-auto p-4">
+            <div className="h-full overflow-y-auto p-4 dark-scroll">
               <pre className="whitespace-pre-wrap font-mono text-sm leading-relaxed text-zinc-200">
                 {output}
                 {isStreaming && (

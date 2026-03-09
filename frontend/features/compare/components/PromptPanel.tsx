@@ -122,7 +122,7 @@ export function PromptPanel({
   const maxCtx = 128_000; // rough cap for the token meter
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto bg-zinc-900">
+    <div className="flex h-full flex-col overflow-y-auto bg-zinc-900 dark-scroll">
 
       {/* ── System Prompt ──────────────────────────────────────────────── */}
       <Section title="System Prompt" collapsible defaultOpen={false}>
