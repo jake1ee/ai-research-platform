@@ -1,5 +1,5 @@
 import { Calculator, Clock, Zap } from 'lucide-react';
-import { ModelResponse } from '../types/model';
+import { ModelResponse } from '@/types/api';
 
 export function StatsBar({ results }: { results: ModelResponse[] }) {
   if (!results.length) return null;
@@ -19,7 +19,7 @@ export function StatsBar({ results }: { results: ModelResponse[] }) {
           <p className="text-sm font-bold text-zinc-900 font-mono">${totalCost.toFixed(6)}</p>
         </div>
       </div>
-      
+
       <div className="flex items-center gap-3 pr-4 border-r border-zinc-200">
         <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
           <Clock className="w-4 h-4" />

@@ -89,7 +89,7 @@ function CompareBar({
           <LabelList
             dataKey="value"
             position="right"
-            formatter={formatter}
+            formatter={(v: unknown) => formatter(Number(v))}
             style={{ fill: '#71717a', fontSize: 10 }}
           />
         </Bar>

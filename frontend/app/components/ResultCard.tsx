@@ -1,5 +1,5 @@
 import { Zap, DollarSign, Hash, Clock } from 'lucide-react';
-import { ModelResponse } from '../types/model';
+import { ModelResponse } from '@/types/api';
 
 interface ResultCardProps {
   result: ModelResponse;

@@ -4,11 +4,9 @@ uvicorn[standard]==0.32.1
 
 # ── Supabase ──────────────────────────────────────────────────────────────────
 supabase==2.10.0             # supabase-py v2 client (Auth + PostgREST + Storage)
-gotrue==2.9.0                # Supabase Auth client (used for JWT verification)
 
 # ── Database (kept for SQLAlchemy/Alembic if needed alongside supabase-py) ────
 sqlalchemy==2.0.36
-psycopg2-binary==2.9.10      # PostgreSQL driver
 alembic==1.14.0              # Database migrations
 
 # ── Auth (legacy self-signed JWT – not needed for Supabase Auth flows) ────────
@@ -41,4 +39,4 @@ stripe==11.3.0
 
 # ── Utilities ─────────────────────────────────────────────────────────────────
 python-multipart==0.0.20     # Required for FastAPI form data / file uploads
-httpx==0.28.1                # Async HTTP client used internally by LiteLLM
+httpx==0.26.0                # Async HTTP client used internally by LiteLLM

@@ -26,7 +26,7 @@ const staggerContainer: Variants = {
 };
 
 export function LandingPage() {
-  const { user, logout } = useAuth();
+  const { user, signOut: logout } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authView, setAuthView] = useState<'signin' | 'signup'>('signin');
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -46,18 +46,18 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-zinc-300 font-sans selection:bg-indigo-500/30">
-      <AuthModal 
-        isOpen={isAuthModalOpen} 
-        onClose={() => setIsAuthModalOpen(false)} 
-        initialView={authView} 
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        initialView={authView}
       />
       {/* Navbar */}
       <nav className="w-full border-b border-white/5 bg-[#0A0A0A]/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center">
           {/* Left - fixed width */}
           <div className="flex items-center gap-2 w-1/3">
-            <a 
-              href="#" 
+            <a
+              href="#"
               onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               className="cursor-pointer"
             >
@@ -83,9 +83,9 @@ export function LandingPage() {
                   className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-zinc-200 hover:bg-white/10 transition-colors"
                 >
                   <div className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
-                    {user.avatarInitials}
+                    {(user.user_metadata?.full_name as string ?? user.email ?? '?')[0].toUpperCase()}
                   </div>
-                  <span className="hidden md:block">{user.name}</span>
+                  <span className="hidden md:block">{(user.user_metadata?.full_name as string) ?? user.email}</span>
                   <ChevronDown className="h-3.5 w-3.5 text-zinc-500" />
                 </button>
 
@@ -99,7 +99,7 @@ export function LandingPage() {
                     {/* Dropdown */}
                     <div className="absolute right-0 z-50 mt-2 w-48 rounded-xl border border-white/10 bg-[#141414] py-1 shadow-xl">
                       <div className="border-b border-white/10 px-4 py-2.5">
-                        <p className="text-xs font-semibold text-white">{user.name}</p>
+                        <p className="text-xs font-semibold text-white">{(user.user_metadata?.full_name as string) ?? user.email}</p>
                         <p className="text-[11px] text-zinc-500">{user.email}</p>
                       </div>
                       <Link
@@ -155,11 +155,11 @@ export function LandingPage() {
       {/* 1. Hero Section */}
       <main className="relative pt-32 pb-24 overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-200 h-200 bg-indigo-500/20 blur-[120px] rounded-full pointer-events-none" />
-        
+
         <div className="max-w-7xl mx-auto px-6 relative z-10 text-center">
-          <motion.div 
-            initial="hidden" 
-            animate="visible" 
+          <motion.div
+            initial="hidden"
+            animate="visible"
             variants={staggerContainer}
             className="flex flex-col items-center"
           >
@@ -167,16 +167,16 @@ export function LandingPage() {
               <Sparkles className="w-3 h-3" />
               <span>The Standard for AI Model Evaluation</span>
             </motion.div>
-            
+
             <motion.h1 variants={fadeUp} className="text-5xl md:text-7xl font-bold tracking-tighter mb-6 leading-[1.1] text-white max-w-4xl">
               Evaluate and Benchmark <br className="hidden md:block" />
               <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-cyan-400">LLMs with Precision</span>
             </motion.h1>
-            
+
             <motion.p variants={fadeUp} className="text-lg md:text-xl text-zinc-400 mb-10 max-w-2xl leading-relaxed">
               Compare latency, cost, and output quality across OpenAI, Anthropic, Google, and Meta models in real-time. Stop guessing, start measuring.
             </motion.p>
-            
+
             <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
               <Link href="/compare" className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-white text-black rounded-full font-medium text-base hover:bg-zinc-200 transition-all">
                 Start Comparing <ArrowRight className="w-4 h-4" />
@@ -293,7 +293,7 @@ export function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
             <div className="hidden md:block absolute top-12 left-[20%] right-[20%] h-px bg-linear-to-r from-transparent via-white/20 to-transparent" />
-            
+
             {[
               { step: "01", title: "Select Models", desc: "Choose from our library of 50+ foundation models or connect your own custom endpoints." },
               { step: "02", title: "Enter Prompt", desc: "Define your system instructions, user prompt, and configure generation parameters." },
@@ -386,7 +386,7 @@ export function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto items-center">
-            
+
             {/* Free */}
             <div className="group relative p-8 rounded-3xl border border-white/10 bg-white/5 h-130 flex flex-col cursor-pointer transition-all duration-300 hover:border-white/30 hover:bg-white/10 hover:shadow-[0_0_30px_-8px_rgba(255,255,255,0.15)] hover:-translate-y-1">
               <div>
@@ -468,7 +468,7 @@ export function LandingPage() {
       <section className="py-32 relative overflow-hidden">
         <div className="absolute inset-0 bg-indigo-500/10" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl h-64 bg-indigo-500/30 blur-[100px] rounded-full pointer-events-none" />
-        
+
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-tight">Ready to optimize your AI stack?</h2>
           <p className="text-xl text-zinc-300 mb-10">
@@ -489,13 +489,13 @@ export function LandingPage() {
             </div>
             <span className="font-bold text-white">ModelCompare</span>
           </div>
-          
+
           <div className="flex gap-8 text-sm text-zinc-500">
             <a href="#" className="hover:text-white transition-colors">Documentation</a>
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
           </div>
-          
+
           <p className="text-sm text-zinc-600">
             © {new Date().getFullYear()} Inferra. All rights reserved.
           </p>

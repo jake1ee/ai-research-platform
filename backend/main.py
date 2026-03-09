@@ -23,7 +23,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import analytics, auth, billing, evaluations, users, workspaces
 
 app = FastAPI(
-    title="ModelCompare API",
+    title="Inferra",
     description="Multi-LLM evaluation platform – compare latency, cost, and quality.",
     version="2.0.0",
     docs_url="/docs",
