@@ -41,3 +41,6 @@ yarn-error.log*
 .pnpm-debug.log*
 coverage/
 .nyc_output/
+
+# Live ingestion output (single-host dev)
+backend/data/live_overlay.json

@@ -36,6 +36,25 @@ Supabase: apply `backend/migrations/003_benchmarks.sql`, run
 `data/manifest.json`. Responses carry ETags and `Cache-Control`; the API is rate limited.
 Interactive docs at `/docs` (non-production).
 
+## Live data
+
+| Data | Source | Schedule |
+|---|---|---|
+| Price, context window, release date | OpenRouter `/models` (primary), LiteLLM price table (fallback) | hourly |
+| Latency, tokens/sec | Probe through LiteLLM with your own provider keys | every 6 h |
+| Benchmark scores | Seed/import (`scripts/seed_benchmarks.py`); add adapters for aggregators you are licensed to use | manual |
+
+1. Map your models to external ids in `backend/data/aliases.json`
+   (`{"slug": {"openrouter": "...", "litellm": "...", "probe": "provider/model"}}`).
+   Find ids with `python scripts/refresh_live_data.py --discover <text>`.
+2. Run once: `python scripts/refresh_live_data.py --metadata` (and `--speed`).
+3. Run `celery -A app.tasks.celery_app worker` and `beat` for the schedule (compose does this).
+
+File mode writes `data/live_overlay.json` (single host only). With separate api/worker
+containers use `BENCHMARK_DATA_SOURCE=supabase` (apply `migrations/004_live_data.sql`).
+The API caches the dataset for `DATASET_TTL_SECONDS` (default 60 s). Models without an alias
+are never touched. Check each source's terms of use before commercial use.
+
 ## Scoring
 
 See `backend/app/benchmarks/scoring.py` (documented at the top of the file) and the in-app

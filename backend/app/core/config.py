@@ -54,6 +54,7 @@ class Settings(BaseSettings):
 
     # Benchmark data: "file" (backend/data/dataset.json) or "supabase"
     BENCHMARK_DATA_SOURCE: str = "file"
+    DATASET_TTL_SECONDS: int = 60  # how long the API caches the dataset in memory
 
     # Public API rate limit (requests per minute per client)
     PUBLIC_RATE_LIMIT_PER_MIN: int = 60

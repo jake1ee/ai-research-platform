@@ -2,7 +2,6 @@
 
 import json
 from dataclasses import dataclass, field
-from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -73,10 +72,42 @@ def load_from_supabase() -> Dataset:
     )
 
 
-@lru_cache(maxsize=1)
+_cache: dict[str, Any] = {"ds": None, "loaded": 0.0, "mtime": None}
+
+
+def _with_overlay(ds: Dataset) -> Dataset:
+    """Merge live updates (data/live_overlay.json) over the base dataset."""
+    from app.ingest.store import read_overlay
+
+    overlay = read_overlay()
+    if not overlay:
+        return ds
+    models = {
+        slug: {**m, **{k: v for k, v in overlay.get(slug, {}).items()}}
+        for slug, m in ds.models.items()
+    }
+    return Dataset(ds.meta, ds.categories, ds.providers, ds.benchmarks, models, ds.results)
+
+
 def get_dataset() -> Dataset:
+    """Cached dataset; reloads when the overlay file changes or after DATASET_TTL_SECONDS."""
+    import time
+
     from app.core.config import settings
+    from app.ingest.store import OVERLAY_FILE
+
+    mtime = OVERLAY_FILE.stat().st_mtime if OVERLAY_FILE.exists() else None
+    fresh = time.monotonic() - _cache["loaded"] < settings.DATASET_TTL_SECONDS
+    if _cache["ds"] is not None and fresh and _cache["mtime"] == mtime:
+        return _cache["ds"]
 
     if settings.BENCHMARK_DATA_SOURCE == "supabase":
-        return load_from_supabase()
-    return load_from_file()
+        ds = load_from_supabase()
+    else:
+        ds = _with_overlay(load_from_file())
+    _cache.update(ds=ds, loaded=time.monotonic(), mtime=mtime)
+    return ds
+
+
+def reset_cache() -> None:
+    _cache.update(ds=None, loaded=0.0, mtime=None)

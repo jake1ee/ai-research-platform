@@ -59,7 +59,12 @@ export default async function LeaderboardPage({
           </p>
         )}
         {stats.last_updated && (
-          <p className="mt-2 text-xs text-subtle">Last verified {formatDate(stats.last_updated)}</p>
+          <p className="mt-2 text-xs text-subtle">
+            Benchmarks last verified {formatDate(stats.last_updated)}
+            {stats.live_updated && (
+              <> · price &amp; speed refreshed {formatDate(stats.live_updated.slice(0, 10))}</>
+            )}
+          </p>
         )}
       </section>
 

@@ -16,7 +16,7 @@ celery_app = Celery(
     "modelcompare",
     broker=settings.CELERY_BROKER_URL,
     backend=settings.CELERY_RESULT_BACKEND,
-    include=["app.tasks.evaluation_tasks"],
+    include=["app.tasks.evaluation_tasks", "app.tasks.ingest_tasks"],
 )
 
 celery_app.conf.update(
@@ -35,6 +35,14 @@ celery_app.conf.update(
         "cleanup-stale-evaluations": {
             "task": "app.tasks.evaluation_tasks.cleanup_stale_evaluations",
             "schedule": 3600.0,
-        }
+        },
+        "refresh-model-metadata": {
+            "task": "app.tasks.ingest_tasks.refresh_metadata",
+            "schedule": 3600.0,  # prices / context change rarely
+        },
+        "refresh-model-speed": {
+            "task": "app.tasks.ingest_tasks.refresh_speed",
+            "schedule": 6 * 3600.0,  # probes spend real tokens
+        },
     },
 )

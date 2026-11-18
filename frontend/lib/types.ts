@@ -102,6 +102,7 @@ export interface Stats {
   providers: number;
   sample_data: boolean;
   last_updated: string | null;
+  live_updated: string | null;
 }
 
 export interface Methodology {

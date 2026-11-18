@@ -10,8 +10,14 @@ from app.benchmarks.scoring import ModelScore
 SORTABLE = {"rank", "score", "name", "price", "context", "speed"}
 
 
+_rank_cache: dict[str, Any] = {"ds": None, "ranking": None}
+
+
 def _ranking(ds: Dataset) -> list[ModelScore]:
-    return scoring.rank_models(ds)
+    """Ranking is a pure function of the dataset: recompute only when the dataset object changes."""
+    if _rank_cache["ds"] is not ds:
+        _rank_cache.update(ds=ds, ranking=scoring.rank_models(ds))
+    return _rank_cache["ranking"]
 
 
 def _entry(ds: Dataset, s: ModelScore) -> dict[str, Any]:
@@ -215,6 +221,10 @@ def stats(ds: Dataset) -> dict[str, Any]:
         "providers": len(ds.providers),
         "sample_data": bool(ds.meta.get("sample")),
         "last_updated": max((r["measured_at"] for r in ds.results), default=None),
+        "live_updated": max(
+            (str(m["live_updated_at"]) for m in ds.models.values() if m.get("live_updated_at")),
+            default=None,
+        ),
     }
 
 
