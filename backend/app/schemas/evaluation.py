@@ -76,9 +76,9 @@ class EvaluationResponse(BaseModel):
 
 class EvaluateRequest(BaseModel):
     """Body for POST /evaluate (synchronous, returns results immediately)."""
-    prompt: str = Field(..., min_length=1, description="User prompt sent to all models")
+    prompt: str = Field(..., min_length=1, max_length=20_000, description="User prompt sent to all models")
     system_prompt: str | None = Field(None, description="Optional system instruction")
-    model_ids: list[str] = Field(..., min_length=1)
+    model_ids: list[str] = Field(..., min_length=1, max_length=6)
     workspace_id: str | None = Field(None, description="Omit for personal evaluation")
     prompt_id: str | None = Field(None, description="ID of a saved prompt template")
 

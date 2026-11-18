@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
-from app.api.routes import analytics, auth, billing, evaluations, health, users, workspaces
+from app.api.routes import analytics, auth, billing, evaluations, health, lab, users, workspaces
 from app.benchmarks.routes import router as benchmarks_router
 from app.core.config import settings
 from app.core.observability import (
@@ -45,6 +45,7 @@ app.add_middleware(
 register_exception_handlers(app)
 
 app.include_router(health.router)
+app.include_router(lab.router)
 app.include_router(benchmarks_router)
 app.include_router(auth.router)
 app.include_router(users.router)

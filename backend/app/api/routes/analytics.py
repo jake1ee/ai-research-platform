@@ -1,121 +1,61 @@
 """
-Analytics routes – mounted at root (no prefix).
+Analytics routes.
 
-Endpoints
----------
-  GET /workspaces/{id}/analytics  – Aggregated analytics summary
+  GET /analytics?days=30[&workspace_id=...]  – personal (default) or workspace analytics
+  GET /workspaces/{id}/analytics             – same, workspace-scoped (kept for compatibility)
+
+Rows are filtered in SQL (owner / workspace + date window) and aggregated in
+app.services.analytics_service; no cross-tenant data is ever loaded.
 """
 
-from collections import defaultdict
 from datetime import UTC, datetime, timedelta
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 
 from app.core.supabase.auth_dependency import AuthUser, get_current_user
 from app.core.supabase.client import get_supabase
 from app.dependencies.workspace import require_workspace_role
-from app.schemas.analytics import AnalyticsSummary, ModelMetricPoint
+from app.schemas.analytics import AnalyticsSummary
+from app.services.analytics_service import summarise
 
 router = APIRouter(tags=["analytics"])
 
+MAX_ROWS = 2000
+RESULT_COLS = "model_id, latency_ms, total_cost, input_tokens, output_tokens, quality_score, error"
 
-@router.get("/workspaces/{workspace_id}/analytics", response_model=AnalyticsSummary)
-def get_analytics(
-    workspace_id: str,
-    days: int = 30,
+
+def _load(scope_col: str, scope_val: str, days: int) -> AnalyticsSummary:
+    window_start = (datetime.now(UTC) - timedelta(days=days * 2)).isoformat()  # 2x: previous period
+    rows = (
+        get_supabase()
+        .table("evaluations")
+        .select(f"id, created_at, prompt, status, model_ids, evaluation_results({RESULT_COLS})")
+        .eq(scope_col, scope_val)
+        .gte("created_at", window_start)
+        .order("created_at", desc=True)
+        .limit(MAX_ROWS)
+        .execute()
+    ).data or []
+    return AnalyticsSummary(**summarise(rows, days))
+
+
+@router.get("/analytics", response_model=AnalyticsSummary)
+def get_my_analytics(
+    days: int = Query(30, ge=1, le=365),
+    workspace_id: str | None = None,
     user: AuthUser = Depends(get_current_user),
 ):
-    """Return aggregated analytics for the workspace over the last *days* days."""
+    if workspace_id:
+        require_workspace_role(workspace_id, user.id, ["admin", "engineer", "viewer"])
+        return _load("workspace_id", workspace_id, days)
+    return _load("user_id", user.id, days)
+
+
+@router.get("/workspaces/{workspace_id}/analytics", response_model=AnalyticsSummary)
+def get_workspace_analytics(
+    workspace_id: str,
+    days: int = Query(30, ge=1, le=365),
+    user: AuthUser = Depends(get_current_user),
+):
     require_workspace_role(workspace_id, user.id, ["admin", "engineer", "viewer"])
-
-    supabase = get_supabase()
-    cutoff = (datetime.now(UTC) - timedelta(days=days)).isoformat()
-
-    logs = (
-        supabase.table("usage_logs")
-        .select("model_id, input_tokens, output_tokens, cost_usd, latency_ms, timestamp")
-        .eq("workspace_id", workspace_id)
-        .gte("timestamp", cutoff)
-        .execute()
-    ).data or []
-
-    eval_ids_resp = (
-        supabase.table("evaluations")
-        .select("id")
-        .eq("workspace_id", workspace_id)
-        .gte("created_at", cutoff)
-        .execute()
-    ).data or []
-    workspace_eval_ids = {r["id"] for r in eval_ids_resp}
-
-    eval_results = (
-        supabase.table("evaluation_results")
-        .select("model_id, judge_score, evaluation_id")
-        .execute()
-    ).data or []
-    eval_results = [r for r in eval_results if r["evaluation_id"] in workspace_eval_ids]
-
-    total_cost = sum(row["cost_usd"] for row in logs)
-    total_tokens = sum(row["input_tokens"] + row["output_tokens"] for row in logs)
-    total_latency = sum(row["latency_ms"] for row in logs)
-    avg_latency = total_latency / len(logs) if logs else 0.0
-
-    model_calls: dict[str, int] = defaultdict(int)
-    model_latency_sum: dict[str, float] = defaultdict(float)
-    model_cost_sum: dict[str, float] = defaultdict(float)
-    model_score_sum: dict[str, float] = defaultdict(float)
-    model_score_count: dict[str, int] = defaultdict(int)
-
-    for log in logs:
-        model_calls[log["model_id"]] += 1
-        model_latency_sum[log["model_id"]] += log["latency_ms"]
-        model_cost_sum[log["model_id"]] += log["cost_usd"]
-
-    for r in eval_results:
-        if r.get("judge_score") is not None:
-            model_score_sum[r["model_id"]] += r["judge_score"]
-            model_score_count[r["model_id"]] += 1
-
-    model_avg_latency = {m: round(model_latency_sum[m] / model_calls[m], 2) for m in model_calls}
-    model_avg_cost = {m: round(model_cost_sum[m] / model_calls[m], 8) for m in model_calls}
-    model_avg_score = {
-        m: round(model_score_sum[m] / model_score_count[m], 2) for m in model_score_count
-    }
-
-    daily_latency: dict[tuple, list] = defaultdict(list)
-    daily_cost: dict[tuple, float] = defaultdict(float)
-    daily_tokens: dict[tuple, int] = defaultdict(int)
-
-    for log in logs:
-        date_str = log["timestamp"][:10]
-        key = (date_str, log["model_id"])
-        daily_latency[key].append(log["latency_ms"])
-        daily_cost[key] += log["cost_usd"]
-        daily_tokens[key] += log["input_tokens"] + log["output_tokens"]
-
-    latency_trend = [
-        ModelMetricPoint(date=k[0], model_id=k[1], value=round(sum(v) / len(v), 2))
-        for k, v in daily_latency.items()
-    ]
-    cost_trend = [
-        ModelMetricPoint(date=k[0], model_id=k[1], value=round(v, 8))
-        for k, v in daily_cost.items()
-    ]
-    token_trend = [
-        ModelMetricPoint(date=k[0], model_id=k[1], value=float(v))
-        for k, v in daily_tokens.items()
-    ]
-
-    return AnalyticsSummary(
-        total_evaluations=len(workspace_eval_ids),
-        total_cost_usd=round(total_cost, 6),
-        total_tokens=total_tokens,
-        avg_latency_ms=round(avg_latency, 2),
-        model_call_counts=dict(model_calls),
-        model_avg_latency_ms=model_avg_latency,
-        model_avg_cost_usd=model_avg_cost,
-        model_avg_judge_score=model_avg_score,
-        latency_trend=latency_trend,
-        cost_trend=cost_trend,
-        token_usage_trend=token_trend,
-    )
+    return _load("workspace_id", workspace_id, days)

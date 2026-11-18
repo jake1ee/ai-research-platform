@@ -37,6 +37,7 @@ async def _call_single_model(
     temperature: float,
     seed: int | None,
     timeout: int,
+    max_tokens: int | None = None,
 ) -> ModelCallResult:
     kwargs: dict[str, Any] = {
         "model": model_id,
@@ -46,6 +47,8 @@ async def _call_single_model(
     }
     if seed is not None:
         kwargs["seed"] = seed
+    if max_tokens is not None:
+        kwargs["max_tokens"] = max_tokens
 
     start = time.monotonic()
     try:
@@ -90,9 +93,14 @@ async def execute_models_parallel(
     system_prompt: str | None = None,
     deterministic_seed: int | None = None,
     timeout: int | None = None,
+    temperature: float | None = None,
+    max_tokens: int | None = None,
 ) -> list[ModelCallResult]:
     """Fan out prompt to all model_ids simultaneously and collect results."""
-    temperature = 0.0 if deterministic_seed is not None else 1.0
+    if deterministic_seed is not None:
+        temperature = 0.0
+    elif temperature is None:
+        temperature = 1.0
     timeout = timeout or settings.LLM_TIMEOUT_SECONDS
 
     messages: list[dict[str, str]] = []
@@ -107,6 +115,7 @@ async def execute_models_parallel(
             temperature=temperature,
             seed=deterministic_seed,
             timeout=timeout,
+            max_tokens=max_tokens,
         )
         for model_id in model_ids
     ]

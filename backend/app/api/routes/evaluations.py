@@ -33,6 +33,7 @@ from app.schemas.evaluation import (
 from app.services.evaluation_service import evaluation_svc
 from app.services.llm_executor import execute_models_parallel
 from app.services.llm_judge import score_with_judge
+from app.services.model_catalog import unknown_models
 from app.services.plan_service import get_user_plan_tier
 from app.services.usage_service import PlanLimitError, usage_svc
 from app.services.workspace_service import workspace_svc
@@ -197,6 +198,11 @@ async def run_evaluate(
 ) -> EvaluateResponse:
     """Execute a full multi-model comparison and return results synchronously."""
 
+    # Only catalogued, active models may be run (these calls spend server-side API keys).
+    requested = list(body.model_ids) + ([body.judge_model] if body.judge_model else [])
+    if bad := unknown_models(requested):
+        raise HTTPException(status_code=422, detail=f"Unsupported model(s): {', '.join(bad)}")
+
     # Plan limit check
     try:
         usage_svc.enforce_plan_limit(
@@ -243,6 +249,8 @@ async def run_evaluate(
         model_ids=body.model_ids,
         system_prompt=body.system_prompt,
         deterministic_seed=body.deterministic_seed,
+        temperature=body.temperature,
+        max_tokens=body.max_tokens,
     )
 
     json_schema_dict = body.json_schema if body.require_json_output else None

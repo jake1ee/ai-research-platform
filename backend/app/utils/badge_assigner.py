@@ -8,6 +8,17 @@ Import pattern:
 from typing import Any
 
 
+def _cost(r: dict[str, Any]) -> float:
+    """Accepts both naming schemes: `total_cost` (DB / sync route) and `cost_usd` (legacy)."""
+    return float(r.get("total_cost", r.get("cost_usd", 0)) or 0)
+
+
+def _score(r: dict[str, Any]) -> float | None:
+    """Accepts `quality_score` (DB / sync route) and `judge_score` (legacy)."""
+    v = r.get("quality_score", r.get("judge_score"))
+    return None if v is None else float(v)
+
+
 def assign_badges(results: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """
     Assign comparative badges to each result dict.
@@ -29,16 +40,16 @@ def assign_badges(results: list[dict[str, Any]]) -> list[dict[str, Any]]:
         if r["latency_ms"] == min_latency:
             r["badges"].append("fastest")
 
-    min_cost = min(r["cost_usd"] for r in successful)
+    min_cost = min(_cost(r) for r in successful)
     for r in successful:
-        if r["cost_usd"] == min_cost:
+        if _cost(r) == min_cost:
             r["badges"].append("cheapest")
 
-    scored = [r for r in successful if r.get("judge_score") is not None]
+    scored = [r for r in successful if _score(r) is not None]
     if scored:
-        max_score = max(r["judge_score"] for r in scored)
+        max_score = max(_score(r) for r in scored)  # type: ignore[type-var]
         for r in scored:
-            if r["judge_score"] == max_score:
+            if _score(r) == max_score:
                 r["badges"].append("best_quality")
 
     max_tokens = max(
