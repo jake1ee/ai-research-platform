@@ -12,14 +12,13 @@ Endpoints
 """
 
 import uuid
-from datetime import datetime, timezone
-from typing import List
+from datetime import UTC, datetime
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 
-from app.core.supabase.auth_dependency import get_current_user
-from app.core.supabase.client import get_supabase
 from app.core.config import settings
+from app.core.supabase.auth_dependency import AuthUser, get_current_user
+from app.core.supabase.client import get_supabase
 from app.dependencies.workspace import get_workspace_or_404, require_workspace_role
 from app.schemas.common import PlanTier, Role
 from app.schemas.workspace import (
@@ -46,12 +45,12 @@ def _plan_eval_limit(tier: str) -> int:
 @router.post("/workspaces", response_model=WorkspaceResponse)
 def create_workspace(
     workspace_in: WorkspaceCreate,
-    user: dict = Depends(get_current_user),
+    user: AuthUser = Depends(get_current_user),
 ):
     """Create a new workspace. Creator is automatically assigned ADMIN."""
     supabase = get_supabase()
     workspace_id = str(uuid.uuid4())
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(UTC).isoformat()
 
     workspace = {
         "id": workspace_id,
@@ -63,7 +62,7 @@ def create_workspace(
     supabase.table("workspaces").insert(workspace).execute()
     supabase.table("workspace_members").insert({
         "workspace_id": workspace_id,
-        "user_id": user["id"],
+        "user_id": user.id,
         "role": Role.ADMIN.value,
         "joined_at": now,
     }).execute()
@@ -72,16 +71,16 @@ def create_workspace(
 
 
 @router.get("/workspaces/{workspace_id}", response_model=WorkspaceResponse)
-def get_workspace(workspace_id: str, user: dict = Depends(get_current_user)):
+def get_workspace(workspace_id: str, user: AuthUser = Depends(get_current_user)):
     """Get workspace details. Requires membership."""
-    require_workspace_role(workspace_id, user["id"], ["admin", "engineer", "viewer"])
+    require_workspace_role(workspace_id, user.id, ["admin", "engineer", "viewer"])
     return WorkspaceResponse(**get_workspace_or_404(workspace_id))
 
 
-@router.get("/workspaces/{workspace_id}/members", response_model=List[WorkspaceMemberResponse])
-def list_workspace_members(workspace_id: str, user: dict = Depends(get_current_user)):
+@router.get("/workspaces/{workspace_id}/members", response_model=list[WorkspaceMemberResponse])
+def list_workspace_members(workspace_id: str, user: AuthUser = Depends(get_current_user)):
     """List all members of a workspace."""
-    require_workspace_role(workspace_id, user["id"], ["admin", "engineer", "viewer"])
+    require_workspace_role(workspace_id, user.id, ["admin", "engineer", "viewer"])
     supabase = get_supabase()
     members = (
         supabase.table("workspace_members")
@@ -96,10 +95,10 @@ def list_workspace_members(workspace_id: str, user: dict = Depends(get_current_u
 def invite_member(
     workspace_id: str,
     invite: WorkspaceMemberInvite,
-    user: dict = Depends(get_current_user),
+    user: AuthUser = Depends(get_current_user),
 ):
     """Invite an existing user to the workspace by email (ADMIN only)."""
-    require_workspace_role(workspace_id, user["id"], ["admin"])
+    require_workspace_role(workspace_id, user.id, ["admin"])
     workspace = get_workspace_or_404(workspace_id)
 
     if workspace["tier"] == "free":
@@ -126,7 +125,7 @@ def invite_member(
     if existing:
         raise HTTPException(status_code=409, detail="User is already a member")
 
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(UTC).isoformat()
     member = {
         "workspace_id": workspace_id,
         "user_id": target_user.id,
@@ -138,14 +137,14 @@ def invite_member(
 
 
 @router.get("/workspaces/{workspace_id}/usage", response_model=UsageStats)
-def get_workspace_usage(workspace_id: str, user: dict = Depends(get_current_user)):
+def get_workspace_usage(workspace_id: str, user: AuthUser = Depends(get_current_user)):
     """Return monthly usage statistics for the workspace."""
-    require_workspace_role(workspace_id, user["id"], ["admin", "engineer", "viewer"])
+    require_workspace_role(workspace_id, user.id, ["admin", "engineer", "viewer"])
     workspace = get_workspace_or_404(workspace_id)
 
     supabase = get_supabase()
-    now = datetime.now(timezone.utc)
-    month_start = datetime(now.year, now.month, 1, tzinfo=timezone.utc).isoformat()
+    now = datetime.now(UTC)
+    month_start = datetime(now.year, now.month, 1, tzinfo=UTC).isoformat()
 
     logs = (
         supabase.table("usage_logs")
@@ -181,10 +180,10 @@ def get_workspace_usage(workspace_id: str, user: dict = Depends(get_current_user
 def upgrade_workspace_plan(
     workspace_id: str,
     body: UpgradePlanRequest,
-    user: dict = Depends(get_current_user),
+    user: AuthUser = Depends(get_current_user),
 ):
     """Upgrade the workspace plan (ADMIN only)."""
-    require_workspace_role(workspace_id, user["id"], ["admin"])
+    require_workspace_role(workspace_id, user.id, ["admin"])
     workspace = get_workspace_or_404(workspace_id)
 
     try:

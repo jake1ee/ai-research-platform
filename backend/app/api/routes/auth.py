@@ -10,7 +10,7 @@ Endpoints
   POST /auth/refresh  – Exchange refresh token for new access token
 """
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.core.supabase.auth_dependency import CurrentUser
@@ -23,6 +23,7 @@ from app.schemas.auth import (
     UserProfile,
 )
 from app.services.auth_service import login_user, logout_user, refresh_session, signup_user
+from app.services.plan_service import get_user_plan_tier
 from app.utils.rate_limiter import rate_limit
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -53,7 +54,7 @@ async def login(body: LoginRequest, request: Request):
 
 @router.post("/logout", response_model=MessageResponse)
 async def logout(
-    credentials: HTTPAuthorizationCredentials = bearer_scheme,
+    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
 ):
     """Revoke the current session token."""
     logout_user(credentials.credentials)
@@ -63,7 +64,12 @@ async def logout(
 @router.get("/me", response_model=UserProfile)
 async def get_me(user: CurrentUser):
     """Return the authenticated user's profile."""
-    return user
+    return UserProfile(
+        id=user.id,
+        email=user.email,
+        full_name=user.name,
+        plan=get_user_plan_tier(user.id),
+    )
 
 
 @router.post("/refresh", response_model=AuthResponse)

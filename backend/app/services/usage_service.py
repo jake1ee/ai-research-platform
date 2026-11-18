@@ -5,8 +5,7 @@ Import pattern:
     from app.services.usage_service import usage_svc, PlanLimitError
 """
 
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 from app.core.config import settings
 from app.core.supabase.client import supabase_admin
@@ -58,10 +57,10 @@ class UsageService:
     def get_current_month_usage(
         self,
         user_id: str,
-        year: Optional[int] = None,
-        month: Optional[int] = None,
+        year: int | None = None,
+        month: int | None = None,
     ) -> dict:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         year  = year  or now.year
         month = month or now.month
 
@@ -114,11 +113,11 @@ class UsageService:
         input_tokens: int,
         output_tokens: int,
         total_cost: float,
-        workspace_id: Optional[str] = None,
+        workspace_id: str | None = None,
         eval_count: int = 1,
     ) -> None:
         """Atomically increment the monthly usage totals via PostgreSQL function."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         supabase_admin.rpc(
             "increment_usage",
             {
@@ -137,7 +136,7 @@ class UsageService:
         self,
         user_id: str,
         results: list[dict],
-        workspace_id: Optional[str] = None,
+        workspace_id: str | None = None,
     ) -> None:
         """Sum tokens/cost across all model results and call increment() once."""
         total_input  = sum(r.get("input_tokens", 0)  for r in results)

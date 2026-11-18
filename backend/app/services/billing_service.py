@@ -5,8 +5,7 @@ Import pattern:
     from app.services.billing_service import upgrade_plan, get_monthly_report, handle_stripe_webhook
 """
 
-from datetime import datetime, timezone
-from typing import Dict, Optional
+from datetime import UTC, datetime
 
 import stripe
 
@@ -16,7 +15,7 @@ from app.schemas.common import BillingStatus, PlanTier
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
-PLAN_PRICE_IDS: Dict[PlanTier, Optional[str]] = {
+PLAN_PRICE_IDS: dict[PlanTier, str | None] = {
     PlanTier.FREE: None,
     PlanTier.PRO: "price_pro_monthly_placeholder",
     PlanTier.ENTERPRISE: "price_enterprise_monthly_placeholder",
@@ -47,10 +46,10 @@ def get_or_create_stripe_customer(workspace: dict, email: str) -> str:
 def report_usage_to_stripe(
     stripe_customer_id: str,
     tokens_used: int,
-    timestamp: Optional[datetime] = None,
+    timestamp: datetime | None = None,
 ) -> None:
     """Report token usage to Stripe for metered billing."""
-    ts = int((timestamp or datetime.now(timezone.utc)).timestamp())
+    ts = int((timestamp or datetime.now(UTC)).timestamp())
     stripe.Customer.modify(
         stripe_customer_id,
         metadata={
@@ -63,7 +62,7 @@ def report_usage_to_stripe(
 def upgrade_plan(
     workspace: dict,
     new_tier: PlanTier,
-    payment_method_id: Optional[str],
+    payment_method_id: str | None,
 ) -> None:
     """Upgrade a workspace to a new plan tier."""
     if not workspace.get("stripe_customer_id"):
@@ -99,11 +98,11 @@ def upgrade_plan(
     ).eq("id", workspace["id"]).execute()
 
 
-def get_monthly_report(workspace_id: str, year: int, month: int) -> Dict:
+def get_monthly_report(workspace_id: str, year: int, month: int) -> dict:
     """Generate a billing report from usage_logs for one calendar month."""
-    start = datetime(year, month, 1, tzinfo=timezone.utc)
-    end = datetime(year + 1, 1, 1, tzinfo=timezone.utc) if month == 12 \
-        else datetime(year, month + 1, 1, tzinfo=timezone.utc)
+    start = datetime(year, month, 1, tzinfo=UTC)
+    end = datetime(year + 1, 1, 1, tzinfo=UTC) if month == 12 \
+        else datetime(year, month + 1, 1, tzinfo=UTC)
 
     supabase = get_supabase()
     response = (
@@ -119,8 +118,8 @@ def get_monthly_report(workspace_id: str, year: int, month: int) -> Dict:
     total_cost = sum(r["cost_usd"] for r in logs)
     total_tokens = sum(r["input_tokens"] + r["output_tokens"] for r in logs)
 
-    cost_by_model: Dict[str, float] = {}
-    tokens_by_model: Dict[str, int] = {}
+    cost_by_model: dict[str, float] = {}
+    tokens_by_model: dict[str, int] = {}
     for log in logs:
         mid = log["model_id"]
         cost_by_model[mid] = cost_by_model.get(mid, 0.0) + log["cost_usd"]
@@ -137,7 +136,7 @@ def get_monthly_report(workspace_id: str, year: int, month: int) -> Dict:
     }
 
 
-def handle_stripe_webhook(payload: bytes, sig_header: str) -> Dict:
+def handle_stripe_webhook(payload: bytes, sig_header: str) -> dict:
     """Verify and dispatch an incoming Stripe webhook event."""
     try:
         event = stripe.Webhook.construct_event(

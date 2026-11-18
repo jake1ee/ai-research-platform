@@ -8,15 +8,14 @@ Endpoints
   POST /billing/webhook                   – Stripe webhook (no auth)
 """
 
-from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 
-from app.core.supabase.auth_dependency import get_current_user
+from app.core.supabase.auth_dependency import AuthUser, get_current_user
 from app.core.supabase.client import get_supabase
 from app.dependencies.workspace import require_workspace_role
 from app.schemas.billing import BillingRecordResponse
-from app.services.billing_service import get_monthly_report, handle_stripe_webhook, upgrade_plan
+from app.services.billing_service import get_monthly_report, handle_stripe_webhook
 
 router = APIRouter(tags=["billing"])
 
@@ -26,10 +25,10 @@ def get_billing_report(
     workspace_id: str,
     year: int,
     month: int,
-    user: dict = Depends(get_current_user),
+    user: AuthUser = Depends(get_current_user),
 ):
     """Generate a monthly billing report (ADMIN only)."""
-    require_workspace_role(workspace_id, user["id"], ["admin"])
+    require_workspace_role(workspace_id, user.id, ["admin"])
     if not (1 <= month <= 12):
         raise HTTPException(status_code=400, detail="month must be between 1 and 12")
     return get_monthly_report(workspace_id, year, month)
@@ -37,11 +36,11 @@ def get_billing_report(
 
 @router.get(
     "/workspaces/{workspace_id}/billing/history",
-    response_model=List[BillingRecordResponse],
+    response_model=list[BillingRecordResponse],
 )
-def list_billing_records(workspace_id: str, user: dict = Depends(get_current_user)):
+def list_billing_records(workspace_id: str, user: AuthUser = Depends(get_current_user)):
     """Return all billing records for a workspace (ADMIN only)."""
-    require_workspace_role(workspace_id, user["id"], ["admin"])
+    require_workspace_role(workspace_id, user.id, ["admin"])
     supabase = get_supabase()
     rows = (
         supabase.table("billing_records")

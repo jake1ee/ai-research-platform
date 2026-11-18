@@ -1,55 +1,58 @@
 """
-ModelCompare FastAPI – root entry point.
+Inferra API – FastAPI entry point.
 
-Running locally
----------------
-    # From the backend/ directory:
     uvicorn main:app --reload --port 8000
-
-    # Or using the frontend package.json script:
-    npm run backend  (from frontend/)
-
-Auth
-----
-  All routes except POST /billing/webhook require a Supabase JWT:
-    Authorization: Bearer <supabase_access_token>
-
-  The JWT is verified by app.core.supabase.auth_dependency.get_current_user.
 """
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 
-from app.api.routes import analytics, auth, billing, evaluations, users, workspaces
+from app.api.routes import analytics, auth, billing, evaluations, health, users, workspaces
+from app.core.config import settings
+from app.core.observability import (
+    RequestContextMiddleware,
+    configure_logging,
+    register_exception_handlers,
+)
+
+configure_logging()
+
+if settings.SENTRY_DSN:
+    import sentry_sdk
+
+    sentry_sdk.init(dsn=settings.SENTRY_DSN, environment=settings.ENVIRONMENT)
 
 app = FastAPI(
-    title="Inferra",
-    description="Multi-LLM evaluation platform – compare latency, cost, and quality.",
-    version="2.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
+    title="Inferra API",
+    description="LLM benchmark leaderboard, comparison data and evaluation lab.",
+    version="3.0.0",
+    docs_url=None if settings.is_production else "/docs",
+    redoc_url=None if settings.is_production else "/redoc",
 )
 
-# ── CORS ──────────────────────────────────────────────────────────────────────
+app.add_middleware(GZipMiddleware, minimum_size=1024)
+app.add_middleware(RequestContextMiddleware)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],   # Tighten in production
+    allow_origins=settings.cors_origins_list,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
+    expose_headers=["X-Request-ID", "ETag"],
 )
+register_exception_handlers(app)
 
-# ── Routers ───────────────────────────────────────────────────────────────────
-app.include_router(auth.router)                         # /auth/*
-app.include_router(users.router)                        # /users/*
-app.include_router(workspaces.router)                   # /workspaces/*
-app.include_router(evaluations.router)                  # /workspaces/*/evaluations, /evaluations/*
-app.include_router(evaluations.evaluate_router)         # /evaluate/*
-app.include_router(billing.router)                      # /workspaces/*/billing/*, /billing/webhook
-app.include_router(analytics.router)                    # /workspaces/*/analytics
+app.include_router(health.router)
+app.include_router(auth.router)
+app.include_router(users.router)
+app.include_router(workspaces.router)
+app.include_router(evaluations.router)
+app.include_router(evaluations.evaluate_router)
+app.include_router(billing.router)
+app.include_router(analytics.router)
 
 
-@app.get("/health", tags=["health"])
-def health_check():
-    """Service health check endpoint."""
-    return {"status": "ok", "version": "2.0.0"}
+@app.get("/health", include_in_schema=False)
+def legacy_health() -> dict[str, str]:
+    return {"status": "ok", "version": app.version}

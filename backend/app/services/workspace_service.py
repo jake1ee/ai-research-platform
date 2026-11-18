@@ -5,7 +5,6 @@ Import pattern:
     from app.services.workspace_service import workspace_svc
 """
 
-from typing import Optional
 
 from app.core.supabase.client import supabase_admin
 
@@ -25,7 +24,7 @@ class WorkspaceService:
         )
         return resp.data is not None
 
-    def get_role(self, workspace_id: str, user_id: str) -> Optional[str]:
+    def get_role(self, workspace_id: str, user_id: str) -> str | None:
         """Return the user's role in the workspace, or None if not a member."""
         resp = (
             supabase_admin.table("workspace_members")
@@ -37,7 +36,7 @@ class WorkspaceService:
         )
         return resp.data["role"] if resp.data else None
 
-    def get_workspace(self, workspace_id: str) -> Optional[dict]:
+    def get_workspace(self, workspace_id: str) -> dict | None:
         """Fetch workspace row by ID."""
         resp = (
             supabase_admin.table("workspaces")

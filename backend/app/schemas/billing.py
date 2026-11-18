@@ -6,7 +6,6 @@ Import pattern:
 """
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -16,7 +15,7 @@ from app.schemas.common import BillingStatus
 class BillingRecordResponse(BaseModel):
     id: str
     workspace_id: str
-    stripe_invoice_id: Optional[str] = None
+    stripe_invoice_id: str | None = None
     amount_usd: float
     period_start: datetime
     period_end: datetime

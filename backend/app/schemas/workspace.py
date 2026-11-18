@@ -6,7 +6,6 @@ Import pattern:
 """
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, EmailStr, Field
 
@@ -21,7 +20,7 @@ class WorkspaceResponse(BaseModel):
     id: str
     name: str
     tier: PlanTier
-    stripe_customer_id: Optional[str] = None
+    stripe_customer_id: str | None = None
     created_at: datetime
 
 
@@ -57,4 +56,4 @@ class UsageLogResponse(BaseModel):
 
 class UpgradePlanRequest(BaseModel):
     tier: PlanTier
-    payment_method_id: Optional[str] = None
+    payment_method_id: str | None = None

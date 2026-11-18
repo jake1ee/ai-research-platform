@@ -9,7 +9,6 @@ import asyncio
 import json
 import re
 from dataclasses import dataclass
-from typing import Dict, Optional
 
 from litellm import acompletion
 
@@ -18,9 +17,9 @@ from app.core.config import settings
 
 @dataclass
 class JudgeScore:
-    score: Optional[float]      # 0.0 – 10.0, None if parsing failed
-    reasoning: Optional[str]
-    error: Optional[str] = None
+    score: float | None      # 0.0 – 10.0, None if parsing failed
+    reasoning: str | None
+    error: str | None = None
 
 
 _SYSTEM_PROMPT = """\
@@ -45,7 +44,7 @@ Rate the response above.
 """
 
 
-def _parse_judge_response(text: str) -> tuple[Optional[float], Optional[str]]:
+def _parse_judge_response(text: str) -> tuple[float | None, str | None]:
     try:
         data = json.loads(text.strip())
         score = float(data.get("score", -1))
@@ -107,9 +106,9 @@ async def _score_single(
 
 async def score_with_judge(
     prompt: str,
-    outputs: Dict[str, str],
-    judge_model: Optional[str] = None,
-) -> Dict[str, JudgeScore]:
+    outputs: dict[str, str],
+    judge_model: str | None = None,
+) -> dict[str, JudgeScore]:
     """Score all model outputs in parallel using an LLM judge."""
     judge = judge_model or f"openai/{settings.DEFAULT_JUDGE_MODEL}"
     to_score = {mid: out for mid, out in outputs.items() if out}
@@ -125,7 +124,7 @@ async def score_with_judge(
     }
 
     results_list = await asyncio.gather(*tasks.values())
-    scores: Dict[str, JudgeScore] = dict(zip(tasks.keys(), results_list))
+    scores: dict[str, JudgeScore] = dict(zip(tasks.keys(), results_list, strict=False))
 
     for model_id in outputs:
         if model_id not in scores:

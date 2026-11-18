@@ -7,9 +7,8 @@ Import pattern:
     from app.dependencies.workspace import require_workspace_role, get_workspace_or_404
 """
 
-from fastapi import Depends, HTTPException, status
+from fastapi import HTTPException, status
 
-from app.core.supabase.auth_dependency import AuthUser, get_current_user
 from app.core.supabase.client import get_supabase
 
 

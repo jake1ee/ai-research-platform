@@ -8,9 +8,8 @@ Import pattern:
 import asyncio
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any
 
-import litellm
 from litellm import acompletion
 
 from app.core.config import settings
@@ -22,24 +21,24 @@ class ModelCallResult:
     """All metrics captured from one model invocation."""
     model_id: str
 
-    output: Optional[str] = None
+    output: str | None = None
     input_tokens: int = 0
     output_tokens: int = 0
     latency_ms: float = 0.0
     cost_usd: float = 0.0
 
-    error: Optional[str] = None
-    raw_response: Optional[Any] = None
+    error: str | None = None
+    raw_response: Any | None = None
 
 
 async def _call_single_model(
     model_id: str,
-    messages: List[Dict[str, str]],
+    messages: list[dict[str, str]],
     temperature: float,
-    seed: Optional[int],
+    seed: int | None,
     timeout: int,
 ) -> ModelCallResult:
-    kwargs: Dict[str, Any] = {
+    kwargs: dict[str, Any] = {
         "model": model_id,
         "messages": messages,
         "temperature": temperature,
@@ -69,7 +68,7 @@ async def _call_single_model(
             raw_response=response,
         )
 
-    except asyncio.TimeoutError:
+    except TimeoutError:
         latency_ms = (time.monotonic() - start) * 1000
         return ModelCallResult(
             model_id=model_id,
@@ -87,16 +86,16 @@ async def _call_single_model(
 
 async def execute_models_parallel(
     prompt: str,
-    model_ids: List[str],
-    system_prompt: Optional[str] = None,
-    deterministic_seed: Optional[int] = None,
-    timeout: Optional[int] = None,
-) -> List[ModelCallResult]:
+    model_ids: list[str],
+    system_prompt: str | None = None,
+    deterministic_seed: int | None = None,
+    timeout: int | None = None,
+) -> list[ModelCallResult]:
     """Fan out prompt to all model_ids simultaneously and collect results."""
     temperature = 0.0 if deterministic_seed is not None else 1.0
     timeout = timeout or settings.LLM_TIMEOUT_SECONDS
 
-    messages: List[Dict[str, str]] = []
+    messages: list[dict[str, str]] = []
     if system_prompt:
         messages.append({"role": "system", "content": system_prompt})
     messages.append({"role": "user", "content": prompt})

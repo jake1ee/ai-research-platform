@@ -20,8 +20,7 @@ import asyncio
 import hashlib
 import json
 import uuid
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 import redis
 from celery.utils.log import get_task_logger
@@ -41,7 +40,7 @@ _redis_client = redis.from_url(settings.REDIS_URL, decode_responses=True)
 
 # ── Cache helpers ──────────────────────────────────────────────────────────────
 
-def _cache_key(prompt: str, system_prompt: Optional[str], model_id: str) -> str:
+def _cache_key(prompt: str, system_prompt: str | None, model_id: str) -> str:
     raw = json.dumps(
         {"prompt": prompt, "system": system_prompt or "", "model": model_id},
         sort_keys=True,
@@ -49,11 +48,11 @@ def _cache_key(prompt: str, system_prompt: Optional[str], model_id: str) -> str:
     return "eval_cache:" + hashlib.sha256(raw.encode()).hexdigest()
 
 
-def _get_cached_output(prompt: str, system_prompt: Optional[str], model_id: str) -> Optional[str]:
+def _get_cached_output(prompt: str, system_prompt: str | None, model_id: str) -> str | None:
     return _redis_client.get(_cache_key(prompt, system_prompt, model_id))
 
 
-def _set_cached_output(prompt: str, system_prompt: Optional[str], model_id: str, output: str) -> None:
+def _set_cached_output(prompt: str, system_prompt: str | None, model_id: str, output: str) -> None:
     _redis_client.setex(
         _cache_key(prompt, system_prompt, model_id),
         settings.CACHE_TTL_SECONDS,
@@ -195,7 +194,7 @@ def run_evaluation(self, evaluation_id: str) -> dict:
 
         succeeded = 0
         failed = 0
-        now_iso = datetime.now(timezone.utc).isoformat()
+        now_iso = datetime.now(UTC).isoformat()
 
         result_rows = []
         usage_rows = []
@@ -271,7 +270,7 @@ def cleanup_stale_evaluations() -> dict:
     """Scheduled task: mark evaluations stuck in RUNNING >10 min as FAILED."""
     from datetime import timedelta
 
-    cutoff = (datetime.now(timezone.utc) - timedelta(minutes=10)).isoformat()
+    cutoff = (datetime.now(UTC) - timedelta(minutes=10)).isoformat()
     supabase = get_supabase()
 
     resp = (

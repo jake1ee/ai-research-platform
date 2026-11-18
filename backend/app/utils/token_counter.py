@@ -5,7 +5,6 @@ Import pattern:
     from app.utils.token_counter import count_tokens
 """
 
-from typing import Optional
 
 try:
     import tiktoken
@@ -14,7 +13,7 @@ except ImportError:
     _HAS_TIKTOKEN = False
 
 
-def count_tokens(text: str, model_id: Optional[str] = None) -> int:
+def count_tokens(text: str, model_id: str | None = None) -> int:
     """
     Count tokens in *text* for the given model.
 

@@ -6,7 +6,7 @@ Import pattern:
 """
 
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -16,12 +16,12 @@ from app.schemas.common import EvaluationStatus
 class EvaluationCreate(BaseModel):
     """Body for POST /workspaces/{id}/evaluations."""
     prompt: str = Field(..., min_length=1)
-    system_prompt: Optional[str] = None
-    model_ids: List[str] = Field(..., min_length=1)
-    deterministic_seed: Optional[int] = None
-    judge_model: Optional[str] = None
+    system_prompt: str | None = None
+    model_ids: list[str] = Field(..., min_length=1)
+    deterministic_seed: int | None = None
+    judge_model: str | None = None
     require_json_output: bool = False
-    json_schema: Optional[Dict[str, Any]] = None
+    json_schema: dict[str, Any] | None = None
 
     @field_validator("model_ids")
     @classmethod
@@ -34,18 +34,18 @@ class EvaluationCreate(BaseModel):
 class EvaluationResultResponse(BaseModel):
     id: str
     model_id: str
-    output: Optional[str] = None
+    output: str | None = None
     input_tokens: int
     output_tokens: int
     latency_ms: float
     cost_usd: float
-    judge_score: Optional[float] = None
-    judge_reasoning: Optional[str] = None
-    is_valid_json: Optional[bool] = None
-    json_validation_error: Optional[str] = None
-    error: Optional[str] = None
+    judge_score: float | None = None
+    judge_reasoning: str | None = None
+    is_valid_json: bool | None = None
+    json_validation_error: str | None = None
+    error: str | None = None
     created_at: datetime
-    badges: List[str] = []
+    badges: list[str] = []
 
 
 class EvaluationResponse(BaseModel):
@@ -53,15 +53,15 @@ class EvaluationResponse(BaseModel):
     workspace_id: str
     user_id: str
     prompt: str
-    system_prompt: Optional[str] = None
-    model_ids: List[str]
+    system_prompt: str | None = None
+    model_ids: list[str]
     status: EvaluationStatus
-    deterministic_seed: Optional[int] = None
-    judge_model: Optional[str] = None
+    deterministic_seed: int | None = None
+    judge_model: str | None = None
     require_json_output: bool
     created_at: datetime
-    completed_at: Optional[datetime] = None
-    results: List[EvaluationResultResponse] = []
+    completed_at: datetime | None = None
+    results: list[EvaluationResultResponse] = []
 
     @field_validator("model_ids", mode="before")
     @classmethod
@@ -77,17 +77,17 @@ class EvaluationResponse(BaseModel):
 class EvaluateRequest(BaseModel):
     """Body for POST /evaluate (synchronous, returns results immediately)."""
     prompt: str = Field(..., min_length=1, description="User prompt sent to all models")
-    system_prompt: Optional[str] = Field(None, description="Optional system instruction")
-    model_ids: List[str] = Field(..., min_length=1)
-    workspace_id: Optional[str] = Field(None, description="Omit for personal evaluation")
-    prompt_id: Optional[str] = Field(None, description="ID of a saved prompt template")
+    system_prompt: str | None = Field(None, description="Optional system instruction")
+    model_ids: list[str] = Field(..., min_length=1)
+    workspace_id: str | None = Field(None, description="Omit for personal evaluation")
+    prompt_id: str | None = Field(None, description="ID of a saved prompt template")
 
     temperature: float = Field(1.0, ge=0.0, le=2.0)
-    max_tokens: Optional[int] = Field(None, gt=0)
-    deterministic_seed: Optional[int] = None
+    max_tokens: int | None = Field(None, gt=0)
+    deterministic_seed: int | None = None
     require_json_output: bool = False
-    json_schema: Optional[Dict[str, Any]] = Field(None)
-    judge_model: Optional[str] = Field(None)
+    json_schema: dict[str, Any] | None = Field(None)
+    judge_model: str | None = Field(None)
 
     @field_validator("model_ids")
     @classmethod
@@ -100,17 +100,17 @@ class EvaluateRequest(BaseModel):
 class ModelResultOut(BaseModel):
     """Per-model result returned by the synchronous /evaluate endpoint."""
     model_id: str
-    output_text: Optional[str]
+    output_text: str | None
     input_tokens: int
     output_tokens: int
     latency_ms: float
     total_cost: float
-    quality_score: Optional[float]
-    judge_reasoning: Optional[str]
-    is_valid_json: Optional[bool]
-    json_validation_error: Optional[str]
-    error: Optional[str]
-    badges: List[str] = []
+    quality_score: float | None
+    judge_reasoning: str | None
+    is_valid_json: bool | None
+    json_validation_error: str | None
+    error: str | None
+    badges: list[str] = []
 
 
 class EvaluateResponse(BaseModel):
@@ -118,8 +118,8 @@ class EvaluateResponse(BaseModel):
     evaluation_id: str
     status: str
     prompt: str
-    model_ids: List[str]
-    results: List[ModelResultOut]
+    model_ids: list[str]
+    results: list[ModelResultOut]
     total_cost_usd: float
     total_input_tokens: int
     total_output_tokens: int

@@ -6,7 +6,6 @@ Import pattern:
 """
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, EmailStr, Field
 
@@ -31,7 +30,7 @@ class UserResponse(BaseModel):
     id: str
     email: str
     name: str
-    created_at: datetime
+    created_at: datetime | None = None
 
 
 class SignupRequest(BaseModel):
@@ -53,9 +52,9 @@ class UserProfile(BaseModel):
     id: str
     email: str
     full_name: str
-    avatar_url: Optional[str] = None
+    avatar_url: str | None = None
     plan: str = "free"
-    created_at: datetime
+    created_at: datetime | None = None
 
 
 class AuthResponse(BaseModel):

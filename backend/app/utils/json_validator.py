@@ -7,7 +7,7 @@ Import pattern:
 
 import json
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 try:
     import jsonschema
@@ -19,13 +19,13 @@ except ImportError:
 @dataclass
 class ValidationResult:
     is_valid: bool
-    error: Optional[str] = None
-    parsed: Optional[Any] = None
+    error: str | None = None
+    parsed: Any | None = None
 
 
 def validate_json_output(
     text: str,
-    schema: Optional[dict] = None,
+    schema: dict | None = None,
 ) -> ValidationResult:
     """
     Validate that *text* is valid JSON, optionally conforming to *schema*.

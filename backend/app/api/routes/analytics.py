@@ -7,11 +7,11 @@ Endpoints
 """
 
 from collections import defaultdict
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends
 
-from app.core.supabase.auth_dependency import get_current_user
+from app.core.supabase.auth_dependency import AuthUser, get_current_user
 from app.core.supabase.client import get_supabase
 from app.dependencies.workspace import require_workspace_role
 from app.schemas.analytics import AnalyticsSummary, ModelMetricPoint
@@ -23,13 +23,13 @@ router = APIRouter(tags=["analytics"])
 def get_analytics(
     workspace_id: str,
     days: int = 30,
-    user: dict = Depends(get_current_user),
+    user: AuthUser = Depends(get_current_user),
 ):
     """Return aggregated analytics for the workspace over the last *days* days."""
-    require_workspace_role(workspace_id, user["id"], ["admin", "engineer", "viewer"])
+    require_workspace_role(workspace_id, user.id, ["admin", "engineer", "viewer"])
 
     supabase = get_supabase()
-    cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+    cutoff = (datetime.now(UTC) - timedelta(days=days)).isoformat()
 
     logs = (
         supabase.table("usage_logs")
@@ -55,9 +55,9 @@ def get_analytics(
     ).data or []
     eval_results = [r for r in eval_results if r["evaluation_id"] in workspace_eval_ids]
 
-    total_cost = sum(l["cost_usd"] for l in logs)
-    total_tokens = sum(l["input_tokens"] + l["output_tokens"] for l in logs)
-    total_latency = sum(l["latency_ms"] for l in logs)
+    total_cost = sum(row["cost_usd"] for row in logs)
+    total_tokens = sum(row["input_tokens"] + row["output_tokens"] for row in logs)
+    total_latency = sum(row["latency_ms"] for row in logs)
     avg_latency = total_latency / len(logs) if logs else 0.0
 
     model_calls: dict[str, int] = defaultdict(int)

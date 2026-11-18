@@ -1,17 +1,17 @@
 """
-Supabase client singletons for ModelCompare.
+Supabase client accessors.
 
-Two clients are exposed:
-  supabase_admin   – uses the service-role key; bypasses RLS.
-                     Used for all backend-internal reads and writes.
-  supabase_anon    – uses the anon key; RLS is enforced.
-                     Only needed if you want user-scoped queries.
+Clients are created lazily so the app (and tests) can be imported without
+credentials. `supabase_admin` / `supabase_anon` are thin proxies that build
+the real client on first attribute access, keeping existing imports working.
 
-Import pattern:
-    from app.core.supabase.client import supabase_admin, get_supabase
+  supabase_admin – service-role key, bypasses RLS. Use only for trusted
+                   backend work (workers, webhooks, system writes).
+  get_user_client(jwt) – anon key + user JWT, so Postgres RLS is enforced.
 """
 
 from functools import lru_cache
+from typing import Any
 
 from supabase import Client, create_client
 
@@ -20,55 +20,39 @@ from app.core.config import settings
 
 @lru_cache(maxsize=1)
 def _build_admin_client() -> Client:
-    """
-    Service-role client – singleton, created once per process.
-    Bypasses RLS: use only for trusted backend writes (results, usage tracking).
-    Never expose this client or its key to the frontend.
-    """
     if not settings.SUPABASE_URL or not settings.SUPABASE_SERVICE_ROLE_KEY:
-        raise RuntimeError(
-            "SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in your .env"
-        )
+        raise RuntimeError("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set")
     return create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_ROLE_KEY)
 
 
 @lru_cache(maxsize=1)
 def _build_anon_client() -> Client:
-    """
-    Anon-key client – singleton.
-    Only used when you explicitly need RLS-enforced queries.
-    """
     if not settings.SUPABASE_URL or not settings.SUPABASE_ANON_KEY:
-        raise RuntimeError(
-            "SUPABASE_URL and SUPABASE_ANON_KEY must be set in your .env"
-        )
+        raise RuntimeError("SUPABASE_URL and SUPABASE_ANON_KEY must be set")
     return create_client(settings.SUPABASE_URL, settings.SUPABASE_ANON_KEY)
 
 
-# Convenience singletons
-supabase_admin: Client = _build_admin_client()
-supabase_anon: Client = _build_anon_client()
+class _LazyClient:
+    """Defers client construction until first use."""
+
+    def __init__(self, factory: Any) -> None:
+        self._factory = factory
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._factory(), name)
+
+
+supabase_admin: Client = _LazyClient(_build_admin_client)  # type: ignore[assignment]
+supabase_anon: Client = _LazyClient(_build_anon_client)  # type: ignore[assignment]
 
 
 def get_supabase() -> Client:
-    """
-    Returns the admin (service-role) client.
-
-    This is the standard accessor used across the codebase.
-    The service-role key bypasses RLS, which is correct for backend operations
-    since access control is enforced at the FastAPI route level via JWT verification.
-    """
-    return supabase_admin
+    """Service-role client (bypasses RLS)."""
+    return _build_admin_client()
 
 
 def get_user_client(jwt: str) -> Client:
-    """
-    Return a Supabase client that sends the user's JWT as the Authorization header.
-
-    Use this only when you explicitly need RLS enforced at the DB level
-    (e.g. direct storage access). For normal API routes, prefer get_supabase()
-    and enforce access control in FastAPI instead.
-    """
+    """Client acting as the user: RLS is enforced by Postgres."""
     client = create_client(settings.SUPABASE_URL, settings.SUPABASE_ANON_KEY)
     client.postgrest.auth(jwt)
     return client

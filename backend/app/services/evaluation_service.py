@@ -8,8 +8,7 @@ Import pattern:
 """
 
 import uuid
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 from supabase import Client
 
@@ -19,7 +18,7 @@ from app.core.supabase.client import supabase_admin
 class EvaluationService:
     """Handles all DB operations for evaluations and their per-model results."""
 
-    def __init__(self, read_client: Optional[Client] = None):
+    def __init__(self, read_client: Client | None = None):
         self._read = read_client or supabase_admin
         self._write = supabase_admin
 
@@ -28,10 +27,10 @@ class EvaluationService:
         user_id: str,
         prompt: str,
         model_ids: list[str],
-        workspace_id: Optional[str] = None,
-        system_prompt: Optional[str] = None,
-        settings: Optional[dict] = None,
-        prompt_id: Optional[str] = None,
+        workspace_id: str | None = None,
+        system_prompt: str | None = None,
+        settings: dict | None = None,
+        prompt_id: str | None = None,
     ) -> dict:
         """Insert a new evaluation row with status='pending'. Returns the inserted row."""
         row = {
@@ -56,7 +55,7 @@ class EvaluationService:
     def mark_completed(self, evaluation_id: str) -> None:
         self._write.table("evaluations").update({
             "status": "completed",
-            "completed_at": datetime.now(timezone.utc).isoformat(),
+            "completed_at": datetime.now(UTC).isoformat(),
         }).eq("id", evaluation_id).execute()
 
     def mark_failed(self, evaluation_id: str) -> None:
@@ -78,7 +77,7 @@ class EvaluationService:
         response = self._write.table("evaluation_results").insert(rows).execute()
         return response.data
 
-    def get_evaluation(self, evaluation_id: str) -> Optional[dict]:
+    def get_evaluation(self, evaluation_id: str) -> dict | None:
         """Fetch a single evaluation with its results embedded."""
         resp = (
             self._read.table("evaluations")
@@ -92,7 +91,7 @@ class EvaluationService:
     def list_evaluations(
         self,
         user_id: str,
-        workspace_id: Optional[str] = None,
+        workspace_id: str | None = None,
         limit: int = 20,
         offset: int = 0,
     ) -> list[dict]:

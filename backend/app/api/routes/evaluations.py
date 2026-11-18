@@ -14,16 +14,15 @@ Sync endpoint (direct LLM call):
 
 import json
 import uuid
-from collections import defaultdict
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
+from typing import Any
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 
+from app.core.config import settings
 from app.core.supabase.auth_dependency import AuthUser, get_current_user
 from app.core.supabase.client import get_supabase
 from app.dependencies.workspace import get_workspace_or_404, require_workspace_role
-from app.core.config import settings
 from app.schemas.evaluation import (
     EvaluateRequest,
     EvaluateResponse,
@@ -34,6 +33,7 @@ from app.schemas.evaluation import (
 from app.services.evaluation_service import evaluation_svc
 from app.services.llm_executor import execute_models_parallel
 from app.services.llm_judge import score_with_judge
+from app.services.plan_service import get_user_plan_tier
 from app.services.usage_service import PlanLimitError, usage_svc
 from app.services.workspace_service import workspace_svc
 from app.tasks.evaluation_tasks import run_evaluation
@@ -56,8 +56,8 @@ def _check_rate_limit(workspace: dict) -> None:
     if limit == -1:
         return
     supabase = get_supabase()
-    now = datetime.now(timezone.utc)
-    month_start = datetime(now.year, now.month, 1, tzinfo=timezone.utc).isoformat()
+    now = datetime.now(UTC)
+    month_start = datetime(now.year, now.month, 1, tzinfo=UTC).isoformat()
     resp = (
         supabase.table("evaluations")
         .select("id", count="exact")
@@ -86,21 +86,21 @@ def submit_evaluation(
     workspace_id: str,
     body: EvaluationCreate,
     background_tasks: BackgroundTasks,
-    user: dict = Depends(get_current_user),
+    user: AuthUser = Depends(get_current_user),
 ):
     """Submit a new multi-model evaluation (returns 202 Accepted, Celery processes async)."""
-    require_workspace_role(workspace_id, user["id"], ["admin", "engineer"])
+    require_workspace_role(workspace_id, user.id, ["admin", "engineer"])
     workspace = get_workspace_or_404(workspace_id)
     _check_rate_limit(workspace)
 
     supabase = get_supabase()
     evaluation_id = str(uuid.uuid4())
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(UTC).isoformat()
 
     evaluation = {
         "id": evaluation_id,
         "workspace_id": workspace_id,
-        "user_id": user["id"],
+        "user_id": user.id,
         "prompt": body.prompt,
         "system_prompt": body.system_prompt,
         "model_ids": ",".join(body.model_ids),
@@ -118,15 +118,15 @@ def submit_evaluation(
     return EvaluationResponse(**evaluation, results=[])
 
 
-@router.get("/workspaces/{workspace_id}/evaluations", response_model=List[EvaluationResponse])
+@router.get("/workspaces/{workspace_id}/evaluations", response_model=list[EvaluationResponse])
 def list_evaluations(
     workspace_id: str,
     limit: int = 20,
     offset: int = 0,
-    user: dict = Depends(get_current_user),
+    user: AuthUser = Depends(get_current_user),
 ):
     """List evaluation history for a workspace, newest first."""
-    require_workspace_role(workspace_id, user["id"], ["admin", "engineer", "viewer"])
+    require_workspace_role(workspace_id, user.id, ["admin", "engineer", "viewer"])
     supabase = get_supabase()
 
     rows = (
@@ -142,7 +142,7 @@ def list_evaluations(
 
 
 @router.get("/evaluations/{evaluation_id}", response_model=EvaluationResponse)
-def get_evaluation(evaluation_id: str, user: dict = Depends(get_current_user)):
+def get_evaluation(evaluation_id: str, user: AuthUser = Depends(get_current_user)):
     """Get an evaluation by ID including all per-model results."""
     supabase = get_supabase()
 
@@ -151,7 +151,7 @@ def get_evaluation(evaluation_id: str, user: dict = Depends(get_current_user)):
     if not evaluation:
         raise HTTPException(status_code=404, detail="Evaluation not found")
 
-    require_workspace_role(evaluation["workspace_id"], user["id"], ["admin", "engineer", "viewer"])
+    require_workspace_role(evaluation["workspace_id"], user.id, ["admin", "engineer", "viewer"])
 
     from app.schemas.evaluation import EvaluationResultResponse
     results_resp = (
@@ -201,7 +201,7 @@ async def run_evaluate(
     try:
         usage_svc.enforce_plan_limit(
             user_id=current_user.id,
-            plan_tier=current_user.plan_tier,
+            plan_tier=get_user_plan_tier(current_user.id),
         )
     except PlanLimitError as exc:
         raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=str(exc))
@@ -217,7 +217,7 @@ async def run_evaluate(
         except ValueError as exc:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(exc))
 
-    eval_settings: Dict[str, Any] = {
+    eval_settings: dict[str, Any] = {
         "temperature": body.temperature if body.deterministic_seed is None else 0.0,
         "max_tokens": body.max_tokens,
         "deterministic_seed": body.deterministic_seed,
@@ -375,7 +375,7 @@ async def get_stored_evaluation(
 
 @_evaluate_router.get("", summary="List recent evaluations")
 async def list_user_evaluations(
-    workspace_id: Optional[str] = None,
+    workspace_id: str | None = None,
     limit: int = 20,
     offset: int = 0,
     current_user: AuthUser = Depends(get_current_user),
