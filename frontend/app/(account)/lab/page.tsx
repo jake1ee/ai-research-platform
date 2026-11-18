@@ -15,17 +15,17 @@
  *
  * API integration
  * ---------------
- * Replace the mock `runEvaluation()` with a real fetch to POST /evaluate.
- * The response shape matches ModelResult[] (see ModelResultCard.tsx).
+ * Models come from GET /lab/models; runs call POST /evaluate (see runEvaluation below).
  */
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { Download, Link2, Check, LayoutGrid, Rows } from 'lucide-react';
 import { PromptPanel, type EvalConfig, estimateTokens } from '@/features/compare/components/PromptPanel';
-import { ModelResultCard, type ModelResult, type ResultStatus } from '@/features/compare/components/ModelResultCard';
+import { api } from '@/services/api';
+import { buildRequest, orderResults } from '@/features/compare/lib/evaluate';
+import { ModelResultCard, type ModelResult } from '@/features/compare/components/ModelResultCard';
 import { MetricsPanel } from '@/features/compare/components/MetricsPanel';
-import { DEFAULT_MODELS } from '@/features/compare/components/ModelSelector';
-import type { BadgeVariant } from '@/features/compare/components/Badge';
+import { DEFAULT_MODELS, type Model } from '@/features/compare/components/ModelSelector';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Default config
@@ -46,50 +46,12 @@ const DEFAULT_CONFIG: EvalConfig = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Mock evaluation (replace with real API call)
+// Real evaluation (POST /evaluate)
 // ─────────────────────────────────────────────────────────────────────────────
 
-async function runEvaluation(config: EvalConfig): Promise<ModelResult[]> {
-  // Simulate network latency
-  await new Promise((res) => setTimeout(res, 500));
-
-  return config.selectedModels.map((modelId, i) => {
-    const model    = DEFAULT_MODELS.find((m) => m.id === modelId);
-    const latency  = Math.floor(Math.random() * 1200 + 300);
-    const inTok    = Math.floor(Math.random() * 500 + 100);
-    const outTok   = Math.floor(Math.random() * 400 + 80);
-    const cost     = (inTok / 1000) * 0.003 + (outTok / 1000) * 0.015;
-    const speed    = (outTok / latency) * 1000;
-    const badge: BadgeVariant[] = [];
-    if (i === 0) badge.push('fastest');
-    if (i === 1) badge.push('cheapest');
-    if (config.judgeEnabled && i === 0) badge.push('best_quality');
-
-    return {
-      modelId,
-      modelName: model?.name ?? modelId,
-      provider:  model?.provider ?? 'Unknown',
-      contextWindow: model?.contextWindow ?? 128_000,
-      status:    'complete' as ResultStatus,
-      output: `This is a mock response from ${model?.name ?? modelId}.\n\n` +
-        `The model processed your prompt and generated this placeholder output. ` +
-        `Replace the mock runEvaluation() function in compare/page.tsx with a real ` +
-        `fetch call to POST /evaluate on your FastAPI backend.\n\n` +
-        `Temperature: ${config.isDeterministic ? 0 : config.temperature}\n` +
-        `Max tokens: ${config.maxTokens}\n` +
-        `Format: ${config.outputFormat}`,
-      inputTokens:  inTok,
-      outputTokens: outTok,
-      latencyMs:    latency,
-      costUsd:      cost,
-      tokensPerSec: speed,
-      badges:       badge,
-      judgeScore:    config.judgeEnabled ? +(Math.random() * 3 + 7).toFixed(1) : undefined,
-      judgeReasoning: config.judgeEnabled
-        ? 'The response is clear, accurate, and well-structured. Minor points deducted for verbosity.'
-        : undefined,
-    };
-  });
+async function runEvaluation(config: EvalConfig, models: Model[]): Promise<ModelResult[]> {
+  const response = await api.runEvaluation(buildRequest(config));
+  return orderResults(config.selectedModels, response.results, models);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -127,6 +89,32 @@ export default function ComparePage() {
   const [isRunning, setIsRunning]   = useState(false);
   const [layout, setLayout]         = useState<'grid' | 'rows'>('grid');
   const [copied, setCopied]         = useState(false);
+  const [models, setModels]         = useState<Model[]>(DEFAULT_MODELS);
+  const [modelsError, setModelsError] = useState<string | null>(null);
+
+  // Load the selectable models from the backend catalog
+  useEffect(() => {
+    let cancelled = false;
+    api.listLabModels()
+      .then((list) => {
+        if (cancelled || list.length === 0) return;
+        setModels(list);
+        // Drop any default selection that is not in the catalog
+        const ids = new Set(list.map((m) => m.id));
+        setConfig((prev) => {
+          const kept = prev.selectedModels.filter((id) => ids.has(id));
+          return {
+            ...prev,
+            selectedModels: kept.length ? kept : list.slice(0, 2).map((m) => m.id),
+            judgeModel: ids.has(prev.judgeModel) ? prev.judgeModel : list[0].id,
+          };
+        });
+      })
+      .catch((e: unknown) => {
+        if (!cancelled) setModelsError(e instanceof Error ? e.message : 'Could not load models');
+      });
+    return () => { cancelled = true; };
+  }, []);
 
   // Live token counter
   const estimatedTokens = useMemo(
@@ -146,7 +134,7 @@ export default function ComparePage() {
 
     // Show pending skeletons immediately
     const pendingResults: ModelResult[] = config.selectedModels.map((modelId) => {
-      const model = DEFAULT_MODELS.find((m) => m.id === modelId);
+      const model = models.find((m) => m.id === modelId);
       return {
         modelId,
         modelName:     model?.name ?? modelId,
@@ -165,8 +153,7 @@ export default function ComparePage() {
     setResults(pendingResults);
 
     try {
-      // ── Replace this with: const data = await fetch('/evaluate', {...}) ──
-      const data = await runEvaluation(config);
+      const data = await runEvaluation(config, models);
       setResults(data);
     } catch (err) {
       // Mark all as errored
@@ -184,8 +171,14 @@ export default function ComparePage() {
 
   // ── Retry single model ────────────────────────────────────────────────────
   async function handleRetry(modelId: string) {
-    const single = await runEvaluation({ ...config, selectedModels: [modelId] });
-    setResults((prev) => prev.map((r) => (r.modelId === modelId ? single[0] : r)));
+    setResults((prev) => prev.map((r) => (r.modelId === modelId ? { ...r, status: 'pending', error: undefined } : r)));
+    try {
+      const [single] = await runEvaluation({ ...config, selectedModels: [modelId] }, models);
+      if (single) setResults((prev) => prev.map((r) => (r.modelId === modelId ? single : r)));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Retry failed';
+      setResults((prev) => prev.map((r) => (r.modelId === modelId ? { ...r, status: 'error', error: message } : r)));
+    }
   }
 
   // ── Copy share link ───────────────────────────────────────────────────────
@@ -205,6 +198,11 @@ export default function ComparePage() {
         <div>
           <h1 className="text-sm font-bold text-zinc-100">Evaluation Lab</h1>
           <p className="text-xs text-zinc-600">Compare LLMs side-by-side</p>
+          {modelsError && (
+            <p role="alert" className="mt-1 text-xs text-amber-500">
+              Couldn&apos;t load the live model list ({modelsError}); showing defaults.
+            </p>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
@@ -263,6 +261,7 @@ export default function ComparePage() {
         {/* LEFT – Configuration */}
         <aside className="w-80 shrink-0 flex flex-col border-r border-zinc-800">
           <PromptPanel
+            models={models}
             config={config}
             onChange={patchConfig}
             onRun={handleRun}

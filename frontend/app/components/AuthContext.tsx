@@ -17,24 +17,16 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
-const MIN_INIT_MS = 1200 // minimum loading screen duration on app boot
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [isInitializing, setIsInitializing] = useState(true)
 
   useEffect(() => {
-    const start = Date.now()
-
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session)
       setUser(data.session?.user ?? null)
-
-      // Hold the loading screen for at least MIN_INIT_MS ms so it feels intentional
-      const elapsed = Date.now() - start
-      const remaining = Math.max(0, MIN_INIT_MS - elapsed)
-      setTimeout(() => setIsInitializing(false), remaining)
+      setIsInitializing(false)
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {

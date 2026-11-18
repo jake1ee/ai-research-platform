@@ -81,3 +81,82 @@ export interface UsageStats {
   plan_limit: number;
   remaining_evals: number;
 }
+
+// ── Lab catalog ────────────────────────────────────────────────────────────────
+
+export interface LabModel {
+  id: string; // litellm id, e.g. "openai/gpt-4o"
+  name: string;
+  provider: string;
+  contextWindow: number;
+  costTier: 'low' | 'mid' | 'high';
+  costPer1kInput: number;
+  costPer1kOutput: number;
+  isActive: boolean;
+}
+
+// ── Analytics ──────────────────────────────────────────────────────────────────
+
+export interface MetricPoint {
+  date: string;
+  model_id: string;
+  value: number;
+}
+
+export interface TokenPoint {
+  date: string;
+  input: number;
+  output: number;
+}
+
+export interface RecentEvaluation {
+  id: string;
+  created_at: string;
+  prompt_preview: string;
+  models: string[];
+  fastest_model: string | null;
+  cheapest_model: string | null;
+  best_quality_model: string | null;
+  total_cost_usd: number;
+  avg_latency_ms: number;
+  status: string;
+}
+
+export interface AnalyticsSummary {
+  total_evaluations: number;
+  total_cost_usd: number;
+  total_tokens: number;
+  avg_latency_ms: number;
+  cost_per_eval_usd: number;
+  top_model: string | null;
+  top_model_calls: number;
+  deltas: { cost: number | null; tokens: number | null; evaluations: number | null; latency: number | null };
+  model_call_counts: Record<string, number>;
+  model_avg_latency_ms: Record<string, number>;
+  model_avg_cost_usd: Record<string, number>;
+  model_avg_judge_score: Record<string, number>;
+  latency_trend: MetricPoint[];
+  cost_trend: MetricPoint[];
+  token_usage_trend: TokenPoint[];
+  recent: RecentEvaluation[];
+}
+
+export interface MyWorkspace {
+  id: string;
+  name: string;
+  plan: 'free' | 'pro' | 'enterprise';
+  role: 'admin' | 'engineer' | 'viewer';
+  memberCount: number;
+  slug?: string | null;
+}
+
+export interface MyUsage {
+  plan: string;
+  evals_used: number;
+  evals_limit: number;
+  evals_remaining: number;
+  tokens_used: number;
+  tokens_limit: number;
+  tokens_remaining: number;
+  cost_this_month_usd: number;
+}

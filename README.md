@@ -75,10 +75,23 @@ All settings are environment variables; see `backend/.env.example` and `frontend
 In production (`ENVIRONMENT=production`) the API refuses to start without Supabase URL,
 service-role key and JWT secret, and disables `/docs`.
 
+## Evaluation Lab & Dashboard
+
+- **Lab** (`/lab`): models come from `GET /lab/models` (the `models` table, active rows only);
+  runs call `POST /evaluate`. The API rejects models outside that catalog (these calls spend
+  server-side provider keys), caps a run at 6 models, and honours temperature / max tokens.
+- **Dashboard** (`/dashboard`): `GET /analytics?days=&workspace_id=` for personal or workspace
+  scope, with deltas against the previous period; plan usage from `GET /users/me/usage`.
+  Aggregation happens in `backend/app/services/analytics_service.py` and is filtered in SQL
+  (never loads other tenants' rows).
+- Both need Supabase configured (`backend/.env`, `frontend/.env.local`) and the `models` table seeded
+  (`backend/migrations/schema.sql`).
+
 ## Status / known gaps
 
-- Evaluation Lab, Dashboard, History and Settings still use the legacy UI and mock data; wiring
-  them to the real backend endpoints is pending.
-- Schema drift between legacy backend code and `migrations/schema.sql` (profiles / usage_logs /
-  billing_records) is not yet reconciled.
-- Frontend API types are hand-written (`frontend/lib/types.ts`); generate from OpenAPI later.
+- History, Profile and Settings still query Supabase tables directly and use the legacy UI.
+- The async evaluation path (`POST /workspaces/{id}/evaluations`, Celery) still uses legacy column
+  names (`tier`, `cost_usd`, `judge_score`) that differ from `migrations/schema.sql`; the Lab uses
+  the schema-aligned sync path. Reconcile before using the async path.
+- Frontend API types are hand-written (`frontend/lib/types.ts`, `frontend/types/api.ts`).
+- Verified with unit tests and a stubbed API; not yet exercised against a real Supabase project.

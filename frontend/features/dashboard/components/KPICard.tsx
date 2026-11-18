@@ -17,7 +17,6 @@ import {
   LineChart,
   Line,
   Tooltip,
-  ReferenceLine,
 } from 'recharts';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -26,8 +25,8 @@ export interface KPICardProps {
   title: string;
   /** Formatted string to display, e.g. "$127.43" or "4.23M" */
   value: string;
-  /** Percentage change vs previous period. Positive = good by default. */
-  delta: number;
+  /** Percentage change vs previous period. Positive = good by default. null = no baseline (hidden). */
+  delta: number | null;
   /**
    * When true a POSITIVE delta is actually bad (e.g. avg latency – we want it going down).
    * Flips the colour logic.
@@ -83,8 +82,10 @@ export function KPICard({
   if (loading) return <KPICardSkeleton />;
 
   // Determine colour: positive delta is green unless inverted
-  const isPositive = deltaInverted ? delta < 0 : delta > 0;
-  const isNeutral  = delta === 0;
+  const hasDelta   = delta !== null;
+  const change     = delta ?? 0;
+  const isPositive = deltaInverted ? change < 0 : change > 0;
+  const isNeutral  = change === 0;
 
   const deltaColour = isNeutral
     ? 'text-zinc-500 bg-zinc-800'
@@ -128,13 +129,17 @@ export function KPICard({
         {subtitle && (
           <span className="text-xs text-zinc-500">{subtitle}</span>
         )}
-        <span
-          className={`inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-xs font-medium ${deltaColour}`}
-        >
-          <DeltaIcon className="h-3 w-3" />
-          {Math.abs(delta).toFixed(1)}%
-        </span>
-        <span className="text-xs text-zinc-600">vs last period</span>
+        {hasDelta && (
+          <>
+            <span
+              className={`inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-xs font-medium ${deltaColour}`}
+            >
+              <DeltaIcon className="h-3 w-3" />
+              {Math.abs(change).toFixed(1)}%
+            </span>
+            <span className="text-xs text-zinc-600">vs last period</span>
+          </>
+        )}
       </div>
 
       {/* Sparkline */}

@@ -16,7 +16,7 @@
 
 import { useState, useCallback } from 'react';
 import { ChevronDown, ChevronUp, Save, Play, Loader2 } from 'lucide-react';
-import { ModelSelector, DEFAULT_MODELS } from './ModelSelector';
+import { ModelSelector, DEFAULT_MODELS, type Model } from './ModelSelector';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -37,6 +37,8 @@ export interface EvalConfig {
 }
 
 interface PromptPanelProps {
+  /** Selectable models (from GET /lab/models). Falls back to the built-in list. */
+  models?: Model[];
   config: EvalConfig;
   onChange: (patch: Partial<EvalConfig>) => void;
   onRun: () => void;
@@ -112,6 +114,7 @@ function Section({
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export function PromptPanel({
+  models,
   config,
   onChange,
   onRun,
@@ -270,9 +273,9 @@ export function PromptPanel({
               onChange={(e) => onChange({ judgeModel: e.target.value })}
               className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-sm text-zinc-200 focus:border-violet-500 focus:outline-none"
             >
-              <option value="openai/gpt-4o">GPT-4o (recommended)</option>
-              <option value="anthropic/claude-3-5-sonnet-20241022">Claude 3.5 Sonnet</option>
-              <option value="google/gemini-1.5-pro">Gemini 1.5 Pro</option>
+              {(models ?? DEFAULT_MODELS).map((m) => (
+                <option key={m.id} value={m.id}>{m.name}</option>
+              ))}
             </select>
           </div>
         )}
@@ -281,7 +284,7 @@ export function PromptPanel({
       {/* ── Model selection ────────────────────────────────────────────── */}
       <Section title="Select Models">
         <ModelSelector
-          models={DEFAULT_MODELS}
+          models={models ?? DEFAULT_MODELS}
           selected={config.selectedModels}
           onChange={(ids) => onChange({ selectedModels: ids })}
         />

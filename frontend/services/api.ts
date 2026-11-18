@@ -7,6 +7,14 @@
  */
 
 import { supabase } from '@/lib/supabase';
+import type {
+  AnalyticsSummary,
+  EvaluateRequest,
+  EvaluateResponse,
+  LabModel,
+  MyUsage,
+  MyWorkspace,
+} from '@/types/api';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
@@ -34,7 +42,7 @@ async function apiFetch<T = unknown>(path: string, options: RequestInit = {}): P
     let errorMessage = `HTTP ${response.status}`;
     try {
       const errorData = await response.json();
-      errorMessage = errorData.detail || errorData.error || errorMessage;
+      errorMessage = errorData.error?.message || errorData.detail || errorMessage;
     } catch {
       // ignore JSON parse error
     }
@@ -48,12 +56,14 @@ async function apiFetch<T = unknown>(path: string, options: RequestInit = {}): P
 
 export const api = {
   // ── Users ──────────────────────────────────────────────────────────────────
-  getMe: () =>
-    apiFetch('/users/me'),
+  getMe: () => apiFetch('/users/me'),
+  getMyUsage: () => apiFetch<MyUsage>('/users/me/usage'),
+
+  // ── Lab ────────────────────────────────────────────────────────────────────
+  listLabModels: () => apiFetch<LabModel[]>('/lab/models'),
 
   // ── Workspaces ─────────────────────────────────────────────────────────────
-  listWorkspaces: () =>
-    apiFetch('/users/me/workspaces'),
+  listWorkspaces: () => apiFetch<MyWorkspace[]>('/users/me/workspaces'),
 
   createWorkspace: (name: string) =>
     apiFetch('/workspaces', { method: 'POST', body: JSON.stringify({ name }) }),
@@ -67,19 +77,8 @@ export const api = {
   // ── Evaluations ────────────────────────────────────────────────────────────
 
   /** Synchronous evaluation (blocks until all LLMs respond). */
-  runEvaluation: (body: {
-    prompt: string;
-    model_ids: string[];
-    system_prompt?: string;
-    temperature?: number;
-    max_tokens?: number;
-    deterministic_seed?: number;
-    require_json_output?: boolean;
-    json_schema?: Record<string, unknown>;
-    judge_model?: string;
-    workspace_id?: string;
-  }) =>
-    apiFetch('/evaluate', { method: 'POST', body: JSON.stringify(body) }),
+  runEvaluation: (body: EvaluateRequest) =>
+    apiFetch<EvaluateResponse>('/evaluate', { method: 'POST', body: JSON.stringify(body) }),
 
   /** Async evaluation via Celery (returns 202, poll by ID). */
   submitEvaluation: (workspaceId: string, body: object) =>
@@ -97,8 +96,9 @@ export const api = {
     apiFetch(`/evaluations/${evaluationId}`),
 
   // ── Analytics ──────────────────────────────────────────────────────────────
-  getAnalytics: (workspaceId: string, days = 30) =>
-    apiFetch(`/workspaces/${workspaceId}/analytics?days=${days}`),
+  /** Personal analytics by default; pass a workspace id for workspace analytics. */
+  getAnalytics: (days = 30, workspaceId?: string) =>
+    apiFetch<AnalyticsSummary>(`/analytics?days=${days}${workspaceId ? `&workspace_id=${workspaceId}` : ''}`),
 
   // ── Billing ────────────────────────────────────────────────────────────────
   getBillingReport: (workspaceId: string, year: number, month: number) =>
