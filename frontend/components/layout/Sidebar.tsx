@@ -10,8 +10,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { Logo } from '@/components/ui/Logo';
 
 const NAV_ITEMS = [
-  { href: '/Dashboard', label: 'Dashboard',  icon: LayoutDashboard },
-  { href: '/compare',   label: 'Compare',    icon: SplitSquareHorizontal },
+  { href: '/dashboard', label: 'Dashboard',  icon: LayoutDashboard },
+  { href: '/lab',       label: 'Lab',    icon: SplitSquareHorizontal },
   { href: '/history',   label: 'History',    icon: History },
   { href: '/settings',  label: 'Settings',   icon: Settings },
 ];

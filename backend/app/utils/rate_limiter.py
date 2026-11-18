@@ -16,6 +16,8 @@ from app.core.config import settings
 
 _redis: aioredis.Redis | None = None
 _local: dict[str, deque[float]] = defaultdict(deque)
+_redis_down_until = 0.0  # circuit breaker: skip Redis briefly after a failure
+_BREAKER_SECONDS = 30.0
 
 
 def _client() -> aioredis.Redis:
@@ -57,10 +59,15 @@ async def rate_limit(
     """Raise HTTP 429 once `limit` requests per `window` seconds is exceeded."""
     bucket_id = int(time.time() // window)
     key = f"rl:{scope}:{client_ip(request)}:{bucket_id}"
-    try:
-        count = await _hit_redis(key, window)
-    except Exception:  # noqa: BLE001 - Redis down: degrade to local counting
+    global _redis_down_until
+    if time.monotonic() < _redis_down_until:
         count = _hit_local(key, window)
+    else:
+        try:
+            count = await _hit_redis(key, window)
+        except Exception:  # noqa: BLE001 - Redis down: degrade to local counting
+            _redis_down_until = time.monotonic() + _BREAKER_SECONDS
+            count = _hit_local(key, window)
 
     if count > limit:
         raise HTTPException(

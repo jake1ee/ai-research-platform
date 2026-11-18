@@ -106,7 +106,7 @@ function CardSkeleton({ modelName }: { modelName: string }) {
         </div>
         <div className="flex-1 space-y-2 rounded-lg bg-zinc-800/50 p-3">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-3 rounded bg-zinc-800" style={{ width: `${60 + Math.random() * 40}%` }} />
+            <div key={i} className="h-3 rounded bg-zinc-800" style={{ width: `${[85, 70, 95, 60, 80, 72][i]}%` }} />
           ))}
         </div>
       </div>

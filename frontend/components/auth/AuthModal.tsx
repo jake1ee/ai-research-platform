@@ -84,8 +84,8 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin' }: AuthModal
         await signIn(email, password);
       }
       onClose();
-    } catch (err: any) {
-      setAuthError(err.message || 'Authentication failed');
+    } catch (err: unknown) {
+      setAuthError((err instanceof Error ? err.message : "") || 'Authentication failed');
     } finally {
       setLoading(false);
     }

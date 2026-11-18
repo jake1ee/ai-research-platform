@@ -1,71 +1,83 @@
 @import "tailwindcss";
 
+/* ── Design tokens ───────────────────────────────────────────────────────────
+   Dark, data-dense. One lime accent; cyan is reserved for secondary chart series. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #07090c;
+  --foreground: #e6edf3;
+  --surface: #0d1117;
+  --surface-2: #121821;
+  --line: #1c2430;
+  --line-strong: #2a3544;
+  --muted: #8b98a8;
+  --subtle: #5d6b7c;
+  --accent: #c6f432;
+  --accent-ink: #0a1000;
+  --cyan: #38d0f0;
+  --warn: #f5b942;
+  --danger: #ff6b6b;
+  color-scheme: dark;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-cyan: var(--cyan);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --radius-card: 10px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--background);
 }
 
 body {
-  background: var(--background);
+  background:
+    radial-gradient(900px 420px at 85% -10%, rgb(198 244 50 / 0.06), transparent 60%),
+    var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
-/* ── Custom scrollbar – dark violet theme ──────────────────────────────── */
-
-/* Slim track for every scrollable element */
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
-::-webkit-scrollbar-corner {
-  background: transparent;
+::selection {
+  background: rgb(198 244 50 / 0.3);
 }
 
-/* Default thumb – neutral, barely visible */
-::-webkit-scrollbar-thumb {
-  background: #3f3f46; /* zinc-700 */
-  border-radius: 9999px;
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
-/* Firefox default */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #3f3f46 transparent;
-}
+/* Scrollbars */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 9999px; }
+* { scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
 
-/* ── .dark-scroll – violet accent, used in dark panels ──────────────── */
-.dark-scroll::-webkit-scrollbar-thumb {
-  background: #52525b; /* zinc-600 – slightly lighter on dark bg */
-}
-
-.dark-scroll::-webkit-scrollbar-thumb:hover {
-  background: #7c3aed; /* violet-600 */
-}
-
-.dark-scroll {
-  scrollbar-color: #52525b transparent;
-}
-
-.dark-scroll:hover {
-  scrollbar-color: #7c3aed transparent;
-}
+/* Legacy class used by the lab pages */
+.dark-scroll::-webkit-scrollbar-thumb:hover { background: var(--accent); }
