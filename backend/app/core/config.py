@@ -52,6 +52,9 @@ class Settings(BaseSettings):
     PRO_EVAL_LIMIT: int = 10_000
     ENTERPRISE_EVAL_LIMIT: int = -1
 
+    # Benchmark data: "file" (backend/data/dataset.json) or "supabase"
+    BENCHMARK_DATA_SOURCE: str = "file"
+
     # Public API rate limit (requests per minute per client)
     PUBLIC_RATE_LIMIT_PER_MIN: int = 60
 

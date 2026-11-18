@@ -1,0 +1,2452 @@
+{
+ "meta": {
+  "sample": true,
+  "generated": "2026-11-18",
+  "note": "Fictional demo data. Replace with sourced results before launch."
+ },
+ "categories": [
+  {
+   "slug": "agentic",
+   "name": "Agentic",
+   "weight": 0.2
+  },
+  {
+   "slug": "coding",
+   "name": "Coding",
+   "weight": 0.2
+  },
+  {
+   "slug": "reasoning",
+   "name": "Reasoning",
+   "weight": 0.15
+  },
+  {
+   "slug": "knowledge",
+   "name": "Knowledge",
+   "weight": 0.12
+  },
+  {
+   "slug": "math",
+   "name": "Math",
+   "weight": 0.1
+  },
+  {
+   "slug": "multimodal",
+   "name": "Multimodal",
+   "weight": 0.08
+  },
+  {
+   "slug": "long_context",
+   "name": "Long context",
+   "weight": 0.08
+  },
+  {
+   "slug": "instruction",
+   "name": "Instruction following",
+   "weight": 0.07
+  }
+ ],
+ "providers": [
+  {
+   "slug": "northwind",
+   "name": "Northwind AI"
+  },
+  {
+   "slug": "helios",
+   "name": "Helios Labs"
+  },
+  {
+   "slug": "quanta",
+   "name": "Quanta Systems"
+  },
+  {
+   "slug": "verdant",
+   "name": "Verdant AI"
+  },
+  {
+   "slug": "ironleaf",
+   "name": "Ironleaf"
+  }
+ ],
+ "benchmarks": [
+  {
+   "slug": "toolrun",
+   "name": "ToolRun",
+   "category": "agentic",
+   "description": "Multi-step tool use in simulated environments",
+   "year": 2025,
+   "format": "agentic",
+   "difficulty": "hard",
+   "source_url": "https://example.com/sample/toolrun"
+  },
+  {
+   "slug": "webquest",
+   "name": "WebQuest",
+   "category": "agentic",
+   "description": "Autonomous web browsing and research tasks",
+   "year": 2025,
+   "format": "agentic",
+   "difficulty": "hard",
+   "source_url": "https://example.com/sample/webquest"
+  },
+  {
+   "slug": "repofix",
+   "name": "RepoFix",
+   "category": "coding",
+   "description": "Resolve real-world repository issues",
+   "year": 2024,
+   "format": "patch",
+   "difficulty": "hard",
+   "source_url": "https://example.com/sample/repofix"
+  },
+  {
+   "slug": "livecode",
+   "name": "LiveCode",
+   "category": "coding",
+   "description": "Fresh competitive programming problems",
+   "year": 2025,
+   "format": "generation",
+   "difficulty": "medium",
+   "source_url": "https://example.com/sample/livecode"
+  },
+  {
+   "slug": "logicgrid",
+   "name": "LogicGrid",
+   "category": "reasoning",
+   "description": "Constraint and deductive puzzles",
+   "year": 2024,
+   "format": "qa",
+   "difficulty": "medium",
+   "source_url": "https://example.com/sample/logicgrid"
+  },
+  {
+   "slug": "abstractiq",
+   "name": "AbstractIQ",
+   "category": "reasoning",
+   "description": "Abstract pattern induction",
+   "year": 2025,
+   "format": "grid",
+   "difficulty": "hard",
+   "source_url": "https://example.com/sample/abstractiq"
+  },
+  {
+   "slug": "worldqa",
+   "name": "WorldQA",
+   "category": "knowledge",
+   "description": "Broad academic knowledge, 57 subjects",
+   "year": 2023,
+   "format": "mcq",
+   "difficulty": "medium",
+   "source_url": "https://example.com/sample/worldqa"
+  },
+  {
+   "slug": "expertqa",
+   "name": "ExpertQA",
+   "category": "knowledge",
+   "description": "Graduate-level expert questions",
+   "year": 2024,
+   "format": "mcq",
+   "difficulty": "hard",
+   "source_url": "https://example.com/sample/expertqa"
+  },
+  {
+   "slug": "mathbowl",
+   "name": "MathBowl",
+   "category": "math",
+   "description": "Competition mathematics",
+   "year": 2025,
+   "format": "free-form",
+   "difficulty": "hard",
+   "source_url": "https://example.com/sample/mathbowl"
+  },
+  {
+   "slug": "gradeschool",
+   "name": "GradeSchool",
+   "category": "math",
+   "description": "Multi-step word problems",
+   "year": 2022,
+   "format": "free-form",
+   "difficulty": "easy",
+   "source_url": "https://example.com/sample/gradeschool"
+  },
+  {
+   "slug": "visionbench",
+   "name": "VisionBench",
+   "category": "multimodal",
+   "description": "Image and chart understanding",
+   "year": 2024,
+   "format": "mcq",
+   "difficulty": "medium",
+   "source_url": "https://example.com/sample/visionbench"
+  },
+  {
+   "slug": "docread",
+   "name": "DocRead",
+   "category": "multimodal",
+   "description": "Document and screenshot reasoning",
+   "year": 2025,
+   "format": "qa",
+   "difficulty": "medium",
+   "source_url": "https://example.com/sample/docread"
+  },
+  {
+   "slug": "needlestack",
+   "name": "NeedleStack",
+   "category": "long_context",
+   "description": "Retrieval in very long documents",
+   "year": 2024,
+   "format": "retrieval",
+   "difficulty": "medium",
+   "source_url": "https://example.com/sample/needlestack"
+  },
+  {
+   "slug": "multihop",
+   "name": "MultiHop-Long",
+   "category": "long_context",
+   "description": "Multi-hop reasoning over long context",
+   "year": 2025,
+   "format": "qa",
+   "difficulty": "hard",
+   "source_url": "https://example.com/sample/multihop"
+  },
+  {
+   "slug": "followit",
+   "name": "FollowIt",
+   "category": "instruction",
+   "description": "Verifiable instruction constraints",
+   "year": 2024,
+   "format": "constraints",
+   "difficulty": "medium",
+   "source_url": "https://example.com/sample/followit"
+  },
+  {
+   "slug": "formatwise",
+   "name": "FormatWise",
+   "category": "instruction",
+   "description": "Strict output-format adherence",
+   "year": 2025,
+   "format": "constraints",
+   "difficulty": "easy",
+   "source_url": "https://example.com/sample/formatwise"
+  }
+ ],
+ "models": [
+  {
+   "slug": "orion-3-ultra",
+   "name": "Orion 3 Ultra",
+   "family": "orion",
+   "provider": "northwind",
+   "license": "proprietary",
+   "context_window": 1000000,
+   "input_price": 12.0,
+   "output_price": 60.0,
+   "tokens_per_sec": 55,
+   "first_token_ms": 343,
+   "release_date": "2026-09-12"
+  },
+  {
+   "slug": "orion-3",
+   "name": "Orion 3",
+   "family": "orion",
+   "provider": "northwind",
+   "license": "proprietary",
+   "context_window": 1000000,
+   "input_price": 3.0,
+   "output_price": 15.0,
+   "tokens_per_sec": 110,
+   "first_token_ms": 261,
+   "release_date": "2026-09-12"
+  },
+  {
+   "slug": "orion-3-mini",
+   "name": "Orion 3 Mini",
+   "family": "orion",
+   "provider": "northwind",
+   "license": "proprietary",
+   "context_window": 400000,
+   "input_price": 0.3,
+   "output_price": 1.2,
+   "tokens_per_sec": 240,
+   "first_token_ms": 217,
+   "release_date": "2026-09-12"
+  },
+  {
+   "slug": "solstice-2-pro",
+   "name": "Solstice 2 Pro",
+   "family": "solstice",
+   "provider": "helios",
+   "license": "proprietary",
+   "context_window": 512000,
+   "input_price": 10.0,
+   "output_price": 40.0,
+   "tokens_per_sec": 70,
+   "first_token_ms": 308,
+   "release_date": "2026-08-02"
+  },
+  {
+   "slug": "solstice-2",
+   "name": "Solstice 2",
+   "family": "solstice",
+   "provider": "helios",
+   "license": "proprietary",
+   "context_window": 512000,
+   "input_price": 2.5,
+   "output_price": 10.0,
+   "tokens_per_sec": 130,
+   "first_token_ms": 249,
+   "release_date": "2026-08-02"
+  },
+  {
+   "slug": "solstice-2-flash",
+   "name": "Solstice 2 Flash",
+   "family": "solstice",
+   "provider": "helios",
+   "license": "proprietary",
+   "context_window": 1000000,
+   "input_price": 0.1,
+   "output_price": 0.4,
+   "tokens_per_sec": 320,
+   "first_token_ms": 208,
+   "release_date": "2026-08-02"
+  },
+  {
+   "slug": "vector-5",
+   "name": "Vector 5",
+   "family": "vector",
+   "provider": "quanta",
+   "license": "proprietary",
+   "context_window": 256000,
+   "input_price": 5.0,
+   "output_price": 20.0,
+   "tokens_per_sec": 85,
+   "first_token_ms": 285,
+   "release_date": "2026-07-21"
+  },
+  {
+   "slug": "vector-5-lite",
+   "name": "Vector 5 Lite",
+   "family": "vector",
+   "provider": "quanta",
+   "license": "proprietary",
+   "context_window": 128000,
+   "input_price": 0.4,
+   "output_price": 1.6,
+   "tokens_per_sec": 210,
+   "first_token_ms": 222,
+   "release_date": "2026-07-21"
+  },
+  {
+   "slug": "fern-4-405b",
+   "name": "Fern 4 405B",
+   "family": "fern",
+   "provider": "verdant",
+   "license": "open",
+   "context_window": 256000,
+   "input_price": 0.0,
+   "output_price": 0.0,
+   "tokens_per_sec": 40,
+   "first_token_ms": 405,
+   "release_date": "2026-06-18"
+  },
+  {
+   "slug": "fern-4-70b",
+   "name": "Fern 4 70B",
+   "family": "fern",
+   "provider": "verdant",
+   "license": "open",
+   "context_window": 128000,
+   "input_price": 0.0,
+   "output_price": 0.0,
+   "tokens_per_sec": 90,
+   "first_token_ms": 280,
+   "release_date": "2026-06-18"
+  },
+  {
+   "slug": "fern-4-8b",
+   "name": "Fern 4 8B",
+   "family": "fern",
+   "provider": "verdant",
+   "license": "open",
+   "context_window": 128000,
+   "input_price": 0.0,
+   "output_price": 0.0,
+   "tokens_per_sec": 300,
+   "first_token_ms": 210,
+   "release_date": "2026-06-18"
+  },
+  {
+   "slug": "oak-r2",
+   "name": "Oak R2",
+   "family": "oak",
+   "provider": "ironleaf",
+   "license": "open",
+   "context_window": 200000,
+   "input_price": 0.0,
+   "output_price": 0.0,
+   "tokens_per_sec": 55,
+   "first_token_ms": 343,
+   "release_date": "2026-10-05"
+  },
+  {
+   "slug": "oak-r2-distill-32b",
+   "name": "Oak R2 Distill 32B",
+   "family": "oak",
+   "provider": "ironleaf",
+   "license": "open",
+   "context_window": 128000,
+   "input_price": 0.0,
+   "output_price": 0.0,
+   "tokens_per_sec": 120,
+   "first_token_ms": 255,
+   "release_date": "2026-10-05"
+  },
+  {
+   "slug": "birch-coder-33b",
+   "name": "Birch Coder 33B",
+   "family": "birch",
+   "provider": "ironleaf",
+   "license": "open",
+   "context_window": 64000,
+   "input_price": 0.0,
+   "output_price": 0.0,
+   "tokens_per_sec": 130,
+   "first_token_ms": 249,
+   "release_date": "2026-05-11"
+  },
+  {
+   "slug": "vector-4-5",
+   "name": "Vector 4.5",
+   "family": "vector",
+   "provider": "quanta",
+   "license": "proprietary",
+   "context_window": 200000,
+   "input_price": 2.0,
+   "output_price": 8.0,
+   "tokens_per_sec": 100,
+   "first_token_ms": 270,
+   "release_date": "2026-02-14"
+  },
+  {
+   "slug": "solstice-1-5",
+   "name": "Solstice 1.5",
+   "family": "solstice",
+   "provider": "helios",
+   "license": "proprietary",
+   "context_window": 128000,
+   "input_price": 0.8,
+   "output_price": 3.2,
+   "tokens_per_sec": 150,
+   "first_token_ms": 240,
+   "release_date": "2025-12-01"
+  }
+ ],
+ "results": [
+  {
+   "model": "orion-3-ultra",
+   "benchmark": "toolrun",
+   "score": 80.4,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/toolrun/orion-3-ultra",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-ultra",
+   "benchmark": "repofix",
+   "score": 77.4,
+   "provenance": "maintainer",
+   "source": "repofix maintainers",
+   "source_url": "https://example.com/sample/repofix/orion-3-ultra",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-ultra",
+   "benchmark": "livecode",
+   "score": 89.1,
+   "provenance": "maintainer",
+   "source": "livecode maintainers",
+   "source_url": "https://example.com/sample/livecode/orion-3-ultra",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-ultra",
+   "benchmark": "logicgrid",
+   "score": 84.4,
+   "provenance": "maintainer",
+   "source": "logicgrid maintainers",
+   "source_url": "https://example.com/sample/logicgrid/orion-3-ultra",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-ultra",
+   "benchmark": "abstractiq",
+   "score": 74.7,
+   "provenance": "independent",
+   "source": "EvalHub",
+   "source_url": "https://example.com/sample/abstractiq/orion-3-ultra",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-ultra",
+   "benchmark": "worldqa",
+   "score": 87.9,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/worldqa/orion-3-ultra",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-ultra",
+   "benchmark": "expertqa",
+   "score": 78.2,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/expertqa/orion-3-ultra",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-ultra",
+   "benchmark": "mathbowl",
+   "score": 80.2,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/mathbowl/orion-3-ultra",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-ultra",
+   "benchmark": "gradeschool",
+   "score": 91.7,
+   "provenance": "maintainer",
+   "source": "gradeschool maintainers",
+   "source_url": "https://example.com/sample/gradeschool/orion-3-ultra",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-ultra",
+   "benchmark": "docread",
+   "score": 79.5,
+   "provenance": "maintainer",
+   "source": "docread maintainers",
+   "source_url": "https://example.com/sample/docread/orion-3-ultra",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-ultra",
+   "benchmark": "needlestack",
+   "score": 83.7,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/needlestack/orion-3-ultra",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-ultra",
+   "benchmark": "multihop",
+   "score": 73.1,
+   "provenance": "independent",
+   "source": "EvalHub",
+   "source_url": "https://example.com/sample/multihop/orion-3-ultra",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-ultra",
+   "benchmark": "followit",
+   "score": 78.6,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/followit/orion-3-ultra",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-ultra",
+   "benchmark": "formatwise",
+   "score": 91.6,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/formatwise/orion-3-ultra",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3",
+   "benchmark": "toolrun",
+   "score": 70.6,
+   "provenance": "maintainer",
+   "source": "toolrun maintainers",
+   "source_url": "https://example.com/sample/toolrun/orion-3",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3",
+   "benchmark": "webquest",
+   "score": 70.8,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/webquest/orion-3",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3",
+   "benchmark": "repofix",
+   "score": 71.5,
+   "provenance": "maintainer",
+   "source": "repofix maintainers",
+   "source_url": "https://example.com/sample/repofix/orion-3",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3",
+   "benchmark": "livecode",
+   "score": 83.6,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/livecode/orion-3",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3",
+   "benchmark": "logicgrid",
+   "score": 84.1,
+   "provenance": "maintainer",
+   "source": "logicgrid maintainers",
+   "source_url": "https://example.com/sample/logicgrid/orion-3",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3",
+   "benchmark": "abstractiq",
+   "score": 70.7,
+   "provenance": "maintainer",
+   "source": "abstractiq maintainers",
+   "source_url": "https://example.com/sample/abstractiq/orion-3",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3",
+   "benchmark": "worldqa",
+   "score": 77.0,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/worldqa/orion-3",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3",
+   "benchmark": "expertqa",
+   "score": 66.7,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/expertqa/orion-3",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3",
+   "benchmark": "mathbowl",
+   "score": 65.5,
+   "provenance": "third_party",
+   "source": "Community report",
+   "source_url": "https://example.com/sample/mathbowl/orion-3",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3",
+   "benchmark": "gradeschool",
+   "score": 82.6,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/gradeschool/orion-3",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3",
+   "benchmark": "visionbench",
+   "score": 79.0,
+   "provenance": "maintainer",
+   "source": "visionbench maintainers",
+   "source_url": "https://example.com/sample/visionbench/orion-3",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3",
+   "benchmark": "needlestack",
+   "score": 79.5,
+   "provenance": "third_party",
+   "source": "Community report",
+   "source_url": "https://example.com/sample/needlestack/orion-3",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3",
+   "benchmark": "multihop",
+   "score": 61.2,
+   "provenance": "maintainer",
+   "source": "multihop maintainers",
+   "source_url": "https://example.com/sample/multihop/orion-3",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3",
+   "benchmark": "followit",
+   "score": 75.6,
+   "provenance": "maintainer",
+   "source": "followit maintainers",
+   "source_url": "https://example.com/sample/followit/orion-3",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3",
+   "benchmark": "formatwise",
+   "score": 82.7,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/formatwise/orion-3",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-mini",
+   "benchmark": "toolrun",
+   "score": 64.1,
+   "provenance": "independent",
+   "source": "OpenArena",
+   "source_url": "https://example.com/sample/toolrun/orion-3-mini",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-mini",
+   "benchmark": "webquest",
+   "score": 62.3,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/webquest/orion-3-mini",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-mini",
+   "benchmark": "repofix",
+   "score": 57.4,
+   "provenance": "maintainer",
+   "source": "repofix maintainers",
+   "source_url": "https://example.com/sample/repofix/orion-3-mini",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-mini",
+   "benchmark": "livecode",
+   "score": 69.7,
+   "provenance": "third_party",
+   "source": "Community report",
+   "source_url": "https://example.com/sample/livecode/orion-3-mini",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-mini",
+   "benchmark": "logicgrid",
+   "score": 69.3,
+   "provenance": "maintainer",
+   "source": "logicgrid maintainers",
+   "source_url": "https://example.com/sample/logicgrid/orion-3-mini",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-mini",
+   "benchmark": "worldqa",
+   "score": 72.1,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/worldqa/orion-3-mini",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-mini",
+   "benchmark": "expertqa",
+   "score": 54.1,
+   "provenance": "maintainer",
+   "source": "expertqa maintainers",
+   "source_url": "https://example.com/sample/expertqa/orion-3-mini",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-mini",
+   "benchmark": "gradeschool",
+   "score": 78.6,
+   "provenance": "maintainer",
+   "source": "gradeschool maintainers",
+   "source_url": "https://example.com/sample/gradeschool/orion-3-mini",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-mini",
+   "benchmark": "visionbench",
+   "score": 70.1,
+   "provenance": "independent",
+   "source": "EvalHub",
+   "source_url": "https://example.com/sample/visionbench/orion-3-mini",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-mini",
+   "benchmark": "docread",
+   "score": 70.2,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/docread/orion-3-mini",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-mini",
+   "benchmark": "needlestack",
+   "score": 65.7,
+   "provenance": "maintainer",
+   "source": "needlestack maintainers",
+   "source_url": "https://example.com/sample/needlestack/orion-3-mini",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-mini",
+   "benchmark": "multihop",
+   "score": 62.3,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/multihop/orion-3-mini",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-mini",
+   "benchmark": "followit",
+   "score": 67.9,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/followit/orion-3-mini",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "orion-3-mini",
+   "benchmark": "formatwise",
+   "score": 72.2,
+   "provenance": "lab",
+   "source": "Northwind AI release notes",
+   "source_url": "https://example.com/sample/formatwise/orion-3-mini",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-pro",
+   "benchmark": "toolrun",
+   "score": 70.9,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/toolrun/solstice-2-pro",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-pro",
+   "benchmark": "webquest",
+   "score": 72.7,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/webquest/solstice-2-pro",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-pro",
+   "benchmark": "repofix",
+   "score": 71.1,
+   "provenance": "maintainer",
+   "source": "repofix maintainers",
+   "source_url": "https://example.com/sample/repofix/solstice-2-pro",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-pro",
+   "benchmark": "livecode",
+   "score": 78.9,
+   "provenance": "maintainer",
+   "source": "livecode maintainers",
+   "source_url": "https://example.com/sample/livecode/solstice-2-pro",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-pro",
+   "benchmark": "logicgrid",
+   "score": 80.5,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/logicgrid/solstice-2-pro",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-pro",
+   "benchmark": "abstractiq",
+   "score": 66.9,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/abstractiq/solstice-2-pro",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-pro",
+   "benchmark": "worldqa",
+   "score": 85.2,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/worldqa/solstice-2-pro",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-pro",
+   "benchmark": "expertqa",
+   "score": 72.5,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/expertqa/solstice-2-pro",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-pro",
+   "benchmark": "mathbowl",
+   "score": 70.6,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/mathbowl/solstice-2-pro",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-pro",
+   "benchmark": "gradeschool",
+   "score": 88.8,
+   "provenance": "independent",
+   "source": "LabCross",
+   "source_url": "https://example.com/sample/gradeschool/solstice-2-pro",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-pro",
+   "benchmark": "docread",
+   "score": 86.2,
+   "provenance": "maintainer",
+   "source": "docread maintainers",
+   "source_url": "https://example.com/sample/docread/solstice-2-pro",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-pro",
+   "benchmark": "needlestack",
+   "score": 91.2,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/needlestack/solstice-2-pro",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-pro",
+   "benchmark": "multihop",
+   "score": 73.4,
+   "provenance": "independent",
+   "source": "EvalHub",
+   "source_url": "https://example.com/sample/multihop/solstice-2-pro",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-pro",
+   "benchmark": "followit",
+   "score": 85.0,
+   "provenance": "independent",
+   "source": "OpenArena",
+   "source_url": "https://example.com/sample/followit/solstice-2-pro",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-pro",
+   "benchmark": "formatwise",
+   "score": 88.0,
+   "provenance": "maintainer",
+   "source": "formatwise maintainers",
+   "source_url": "https://example.com/sample/formatwise/solstice-2-pro",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2",
+   "benchmark": "toolrun",
+   "score": 60.5,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/toolrun/solstice-2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2",
+   "benchmark": "webquest",
+   "score": 63.4,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/webquest/solstice-2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2",
+   "benchmark": "repofix",
+   "score": 65.0,
+   "provenance": "maintainer",
+   "source": "repofix maintainers",
+   "source_url": "https://example.com/sample/repofix/solstice-2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2",
+   "benchmark": "livecode",
+   "score": 74.0,
+   "provenance": "maintainer",
+   "source": "livecode maintainers",
+   "source_url": "https://example.com/sample/livecode/solstice-2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2",
+   "benchmark": "logicgrid",
+   "score": 76.7,
+   "provenance": "maintainer",
+   "source": "logicgrid maintainers",
+   "source_url": "https://example.com/sample/logicgrid/solstice-2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2",
+   "benchmark": "abstractiq",
+   "score": 65.9,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/abstractiq/solstice-2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2",
+   "benchmark": "worldqa",
+   "score": 71.5,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/worldqa/solstice-2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2",
+   "benchmark": "expertqa",
+   "score": 62.7,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/expertqa/solstice-2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2",
+   "benchmark": "mathbowl",
+   "score": 64.5,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/mathbowl/solstice-2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2",
+   "benchmark": "gradeschool",
+   "score": 78.8,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/gradeschool/solstice-2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2",
+   "benchmark": "docread",
+   "score": 78.7,
+   "provenance": "maintainer",
+   "source": "docread maintainers",
+   "source_url": "https://example.com/sample/docread/solstice-2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2",
+   "benchmark": "needlestack",
+   "score": 78.5,
+   "provenance": "independent",
+   "source": "EvalHub",
+   "source_url": "https://example.com/sample/needlestack/solstice-2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2",
+   "benchmark": "multihop",
+   "score": 67.8,
+   "provenance": "independent",
+   "source": "LabCross",
+   "source_url": "https://example.com/sample/multihop/solstice-2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2",
+   "benchmark": "followit",
+   "score": 76.3,
+   "provenance": "third_party",
+   "source": "Community report",
+   "source_url": "https://example.com/sample/followit/solstice-2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2",
+   "benchmark": "formatwise",
+   "score": 79.1,
+   "provenance": "independent",
+   "source": "EvalHub",
+   "source_url": "https://example.com/sample/formatwise/solstice-2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-flash",
+   "benchmark": "toolrun",
+   "score": 52.7,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/toolrun/solstice-2-flash",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-flash",
+   "benchmark": "webquest",
+   "score": 55.9,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/webquest/solstice-2-flash",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-flash",
+   "benchmark": "repofix",
+   "score": 54.3,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/repofix/solstice-2-flash",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-flash",
+   "benchmark": "livecode",
+   "score": 63.7,
+   "provenance": "independent",
+   "source": "EvalHub",
+   "source_url": "https://example.com/sample/livecode/solstice-2-flash",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-flash",
+   "benchmark": "abstractiq",
+   "score": 55.9,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/abstractiq/solstice-2-flash",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-flash",
+   "benchmark": "worldqa",
+   "score": 71.7,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/worldqa/solstice-2-flash",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-flash",
+   "benchmark": "expertqa",
+   "score": 62.1,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/expertqa/solstice-2-flash",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-flash",
+   "benchmark": "gradeschool",
+   "score": 71.4,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/gradeschool/solstice-2-flash",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-flash",
+   "benchmark": "visionbench",
+   "score": 69.4,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/visionbench/solstice-2-flash",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-flash",
+   "benchmark": "needlestack",
+   "score": 77.3,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/needlestack/solstice-2-flash",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-flash",
+   "benchmark": "multihop",
+   "score": 56.7,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/multihop/solstice-2-flash",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-flash",
+   "benchmark": "followit",
+   "score": 60.3,
+   "provenance": "third_party",
+   "source": "Community report",
+   "source_url": "https://example.com/sample/followit/solstice-2-flash",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-2-flash",
+   "benchmark": "formatwise",
+   "score": 69.8,
+   "provenance": "independent",
+   "source": "EvalHub",
+   "source_url": "https://example.com/sample/formatwise/solstice-2-flash",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5",
+   "benchmark": "toolrun",
+   "score": 72.3,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/toolrun/vector-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5",
+   "benchmark": "webquest",
+   "score": 64.3,
+   "provenance": "maintainer",
+   "source": "webquest maintainers",
+   "source_url": "https://example.com/sample/webquest/vector-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5",
+   "benchmark": "repofix",
+   "score": 73.6,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/repofix/vector-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5",
+   "benchmark": "logicgrid",
+   "score": 78.9,
+   "provenance": "independent",
+   "source": "EvalHub",
+   "source_url": "https://example.com/sample/logicgrid/vector-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5",
+   "benchmark": "abstractiq",
+   "score": 75.4,
+   "provenance": "independent",
+   "source": "EvalHub",
+   "source_url": "https://example.com/sample/abstractiq/vector-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5",
+   "benchmark": "worldqa",
+   "score": 78.6,
+   "provenance": "maintainer",
+   "source": "worldqa maintainers",
+   "source_url": "https://example.com/sample/worldqa/vector-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5",
+   "benchmark": "expertqa",
+   "score": 75.2,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/expertqa/vector-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5",
+   "benchmark": "mathbowl",
+   "score": 68.1,
+   "provenance": "maintainer",
+   "source": "mathbowl maintainers",
+   "source_url": "https://example.com/sample/mathbowl/vector-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5",
+   "benchmark": "gradeschool",
+   "score": 96.1,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/gradeschool/vector-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5",
+   "benchmark": "visionbench",
+   "score": 81.1,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/visionbench/vector-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5",
+   "benchmark": "docread",
+   "score": 77.0,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/docread/vector-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5",
+   "benchmark": "multihop",
+   "score": 74.3,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/multihop/vector-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5",
+   "benchmark": "followit",
+   "score": 86.8,
+   "provenance": "maintainer",
+   "source": "followit maintainers",
+   "source_url": "https://example.com/sample/followit/vector-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5",
+   "benchmark": "formatwise",
+   "score": 86.1,
+   "provenance": "maintainer",
+   "source": "formatwise maintainers",
+   "source_url": "https://example.com/sample/formatwise/vector-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5-lite",
+   "benchmark": "toolrun",
+   "score": 61.0,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/toolrun/vector-5-lite",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5-lite",
+   "benchmark": "webquest",
+   "score": 58.9,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/webquest/vector-5-lite",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5-lite",
+   "benchmark": "repofix",
+   "score": 55.7,
+   "provenance": "maintainer",
+   "source": "repofix maintainers",
+   "source_url": "https://example.com/sample/repofix/vector-5-lite",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5-lite",
+   "benchmark": "logicgrid",
+   "score": 67.7,
+   "provenance": "independent",
+   "source": "LabCross",
+   "source_url": "https://example.com/sample/logicgrid/vector-5-lite",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5-lite",
+   "benchmark": "abstractiq",
+   "score": 61.8,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/abstractiq/vector-5-lite",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5-lite",
+   "benchmark": "worldqa",
+   "score": 70.5,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/worldqa/vector-5-lite",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5-lite",
+   "benchmark": "expertqa",
+   "score": 55.6,
+   "provenance": "maintainer",
+   "source": "expertqa maintainers",
+   "source_url": "https://example.com/sample/expertqa/vector-5-lite",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5-lite",
+   "benchmark": "mathbowl",
+   "score": 63.9,
+   "provenance": "independent",
+   "source": "LabCross",
+   "source_url": "https://example.com/sample/mathbowl/vector-5-lite",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5-lite",
+   "benchmark": "gradeschool",
+   "score": 80.1,
+   "provenance": "maintainer",
+   "source": "gradeschool maintainers",
+   "source_url": "https://example.com/sample/gradeschool/vector-5-lite",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5-lite",
+   "benchmark": "docread",
+   "score": 68.8,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/docread/vector-5-lite",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5-lite",
+   "benchmark": "needlestack",
+   "score": 67.2,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/needlestack/vector-5-lite",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5-lite",
+   "benchmark": "multihop",
+   "score": 57.6,
+   "provenance": "maintainer",
+   "source": "multihop maintainers",
+   "source_url": "https://example.com/sample/multihop/vector-5-lite",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5-lite",
+   "benchmark": "followit",
+   "score": 65.6,
+   "provenance": "maintainer",
+   "source": "followit maintainers",
+   "source_url": "https://example.com/sample/followit/vector-5-lite",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-5-lite",
+   "benchmark": "formatwise",
+   "score": 71.6,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/formatwise/vector-5-lite",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-405b",
+   "benchmark": "webquest",
+   "score": 66.2,
+   "provenance": "lab",
+   "source": "Verdant AI release notes",
+   "source_url": "https://example.com/sample/webquest/fern-4-405b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-405b",
+   "benchmark": "repofix",
+   "score": 64.6,
+   "provenance": "maintainer",
+   "source": "repofix maintainers",
+   "source_url": "https://example.com/sample/repofix/fern-4-405b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-405b",
+   "benchmark": "logicgrid",
+   "score": 77.9,
+   "provenance": "independent",
+   "source": "LabCross",
+   "source_url": "https://example.com/sample/logicgrid/fern-4-405b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-405b",
+   "benchmark": "abstractiq",
+   "score": 63.3,
+   "provenance": "maintainer",
+   "source": "abstractiq maintainers",
+   "source_url": "https://example.com/sample/abstractiq/fern-4-405b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-405b",
+   "benchmark": "worldqa",
+   "score": 82.2,
+   "provenance": "maintainer",
+   "source": "worldqa maintainers",
+   "source_url": "https://example.com/sample/worldqa/fern-4-405b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-405b",
+   "benchmark": "expertqa",
+   "score": 66.4,
+   "provenance": "independent",
+   "source": "OpenArena",
+   "source_url": "https://example.com/sample/expertqa/fern-4-405b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-405b",
+   "benchmark": "mathbowl",
+   "score": 65.9,
+   "provenance": "lab",
+   "source": "Verdant AI release notes",
+   "source_url": "https://example.com/sample/mathbowl/fern-4-405b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-405b",
+   "benchmark": "gradeschool",
+   "score": 78.6,
+   "provenance": "lab",
+   "source": "Verdant AI release notes",
+   "source_url": "https://example.com/sample/gradeschool/fern-4-405b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-405b",
+   "benchmark": "visionbench",
+   "score": 76.2,
+   "provenance": "maintainer",
+   "source": "visionbench maintainers",
+   "source_url": "https://example.com/sample/visionbench/fern-4-405b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-405b",
+   "benchmark": "docread",
+   "score": 79.2,
+   "provenance": "lab",
+   "source": "Verdant AI release notes",
+   "source_url": "https://example.com/sample/docread/fern-4-405b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-405b",
+   "benchmark": "multihop",
+   "score": 64.7,
+   "provenance": "lab",
+   "source": "Verdant AI release notes",
+   "source_url": "https://example.com/sample/multihop/fern-4-405b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-405b",
+   "benchmark": "followit",
+   "score": 80.2,
+   "provenance": "maintainer",
+   "source": "followit maintainers",
+   "source_url": "https://example.com/sample/followit/fern-4-405b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-70b",
+   "benchmark": "toolrun",
+   "score": 56.0,
+   "provenance": "independent",
+   "source": "EvalHub",
+   "source_url": "https://example.com/sample/toolrun/fern-4-70b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-70b",
+   "benchmark": "webquest",
+   "score": 63.3,
+   "provenance": "maintainer",
+   "source": "webquest maintainers",
+   "source_url": "https://example.com/sample/webquest/fern-4-70b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-70b",
+   "benchmark": "repofix",
+   "score": 62.4,
+   "provenance": "lab",
+   "source": "Verdant AI release notes",
+   "source_url": "https://example.com/sample/repofix/fern-4-70b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-70b",
+   "benchmark": "livecode",
+   "score": 69.1,
+   "provenance": "maintainer",
+   "source": "livecode maintainers",
+   "source_url": "https://example.com/sample/livecode/fern-4-70b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-70b",
+   "benchmark": "logicgrid",
+   "score": 67.6,
+   "provenance": "lab",
+   "source": "Verdant AI release notes",
+   "source_url": "https://example.com/sample/logicgrid/fern-4-70b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-70b",
+   "benchmark": "abstractiq",
+   "score": 60.2,
+   "provenance": "maintainer",
+   "source": "abstractiq maintainers",
+   "source_url": "https://example.com/sample/abstractiq/fern-4-70b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-70b",
+   "benchmark": "worldqa",
+   "score": 76.6,
+   "provenance": "third_party",
+   "source": "Community report",
+   "source_url": "https://example.com/sample/worldqa/fern-4-70b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-70b",
+   "benchmark": "mathbowl",
+   "score": 54.3,
+   "provenance": "maintainer",
+   "source": "mathbowl maintainers",
+   "source_url": "https://example.com/sample/mathbowl/fern-4-70b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-70b",
+   "benchmark": "visionbench",
+   "score": 71.3,
+   "provenance": "lab",
+   "source": "Verdant AI release notes",
+   "source_url": "https://example.com/sample/visionbench/fern-4-70b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-70b",
+   "benchmark": "docread",
+   "score": 68.6,
+   "provenance": "lab",
+   "source": "Verdant AI release notes",
+   "source_url": "https://example.com/sample/docread/fern-4-70b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-70b",
+   "benchmark": "needlestack",
+   "score": 73.0,
+   "provenance": "independent",
+   "source": "OpenArena",
+   "source_url": "https://example.com/sample/needlestack/fern-4-70b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-70b",
+   "benchmark": "followit",
+   "score": 72.1,
+   "provenance": "third_party",
+   "source": "Community report",
+   "source_url": "https://example.com/sample/followit/fern-4-70b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-70b",
+   "benchmark": "formatwise",
+   "score": 85.8,
+   "provenance": "lab",
+   "source": "Verdant AI release notes",
+   "source_url": "https://example.com/sample/formatwise/fern-4-70b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-8b",
+   "benchmark": "toolrun",
+   "score": 48.1,
+   "provenance": "lab",
+   "source": "Verdant AI release notes",
+   "source_url": "https://example.com/sample/toolrun/fern-4-8b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-8b",
+   "benchmark": "webquest",
+   "score": 45.2,
+   "provenance": "lab",
+   "source": "Verdant AI release notes",
+   "source_url": "https://example.com/sample/webquest/fern-4-8b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-8b",
+   "benchmark": "repofix",
+   "score": 48.4,
+   "provenance": "lab",
+   "source": "Verdant AI release notes",
+   "source_url": "https://example.com/sample/repofix/fern-4-8b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-8b",
+   "benchmark": "livecode",
+   "score": 51.1,
+   "provenance": "lab",
+   "source": "Verdant AI release notes",
+   "source_url": "https://example.com/sample/livecode/fern-4-8b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-8b",
+   "benchmark": "logicgrid",
+   "score": 51.9,
+   "provenance": "lab",
+   "source": "Verdant AI release notes",
+   "source_url": "https://example.com/sample/logicgrid/fern-4-8b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-8b",
+   "benchmark": "abstractiq",
+   "score": 39.2,
+   "provenance": "lab",
+   "source": "Verdant AI release notes",
+   "source_url": "https://example.com/sample/abstractiq/fern-4-8b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-8b",
+   "benchmark": "worldqa",
+   "score": 55.0,
+   "provenance": "maintainer",
+   "source": "worldqa maintainers",
+   "source_url": "https://example.com/sample/worldqa/fern-4-8b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-8b",
+   "benchmark": "expertqa",
+   "score": 47.2,
+   "provenance": "maintainer",
+   "source": "expertqa maintainers",
+   "source_url": "https://example.com/sample/expertqa/fern-4-8b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-8b",
+   "benchmark": "mathbowl",
+   "score": 42.6,
+   "provenance": "maintainer",
+   "source": "mathbowl maintainers",
+   "source_url": "https://example.com/sample/mathbowl/fern-4-8b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-8b",
+   "benchmark": "gradeschool",
+   "score": 58.4,
+   "provenance": "maintainer",
+   "source": "gradeschool maintainers",
+   "source_url": "https://example.com/sample/gradeschool/fern-4-8b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-8b",
+   "benchmark": "docread",
+   "score": 56.3,
+   "provenance": "lab",
+   "source": "Verdant AI release notes",
+   "source_url": "https://example.com/sample/docread/fern-4-8b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-8b",
+   "benchmark": "needlestack",
+   "score": 51.3,
+   "provenance": "maintainer",
+   "source": "needlestack maintainers",
+   "source_url": "https://example.com/sample/needlestack/fern-4-8b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-8b",
+   "benchmark": "multihop",
+   "score": 40.8,
+   "provenance": "maintainer",
+   "source": "multihop maintainers",
+   "source_url": "https://example.com/sample/multihop/fern-4-8b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-8b",
+   "benchmark": "followit",
+   "score": 59.3,
+   "provenance": "lab",
+   "source": "Verdant AI release notes",
+   "source_url": "https://example.com/sample/followit/fern-4-8b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "fern-4-8b",
+   "benchmark": "formatwise",
+   "score": 60.5,
+   "provenance": "maintainer",
+   "source": "formatwise maintainers",
+   "source_url": "https://example.com/sample/formatwise/fern-4-8b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2",
+   "benchmark": "toolrun",
+   "score": 63.6,
+   "provenance": "independent",
+   "source": "EvalHub",
+   "source_url": "https://example.com/sample/toolrun/oak-r2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2",
+   "benchmark": "webquest",
+   "score": 61.9,
+   "provenance": "maintainer",
+   "source": "webquest maintainers",
+   "source_url": "https://example.com/sample/webquest/oak-r2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2",
+   "benchmark": "repofix",
+   "score": 68.8,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/repofix/oak-r2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2",
+   "benchmark": "livecode",
+   "score": 74.0,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/livecode/oak-r2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2",
+   "benchmark": "logicgrid",
+   "score": 77.3,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/logicgrid/oak-r2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2",
+   "benchmark": "worldqa",
+   "score": 70.7,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/worldqa/oak-r2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2",
+   "benchmark": "expertqa",
+   "score": 60.9,
+   "provenance": "maintainer",
+   "source": "expertqa maintainers",
+   "source_url": "https://example.com/sample/expertqa/oak-r2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2",
+   "benchmark": "mathbowl",
+   "score": 63.2,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/mathbowl/oak-r2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2",
+   "benchmark": "gradeschool",
+   "score": 79.0,
+   "provenance": "maintainer",
+   "source": "gradeschool maintainers",
+   "source_url": "https://example.com/sample/gradeschool/oak-r2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2",
+   "benchmark": "visionbench",
+   "score": 71.3,
+   "provenance": "maintainer",
+   "source": "visionbench maintainers",
+   "source_url": "https://example.com/sample/visionbench/oak-r2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2",
+   "benchmark": "docread",
+   "score": 72.7,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/docread/oak-r2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2",
+   "benchmark": "needlestack",
+   "score": 75.3,
+   "provenance": "maintainer",
+   "source": "needlestack maintainers",
+   "source_url": "https://example.com/sample/needlestack/oak-r2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2",
+   "benchmark": "multihop",
+   "score": 63.7,
+   "provenance": "maintainer",
+   "source": "multihop maintainers",
+   "source_url": "https://example.com/sample/multihop/oak-r2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2",
+   "benchmark": "followit",
+   "score": 76.4,
+   "provenance": "third_party",
+   "source": "Community report",
+   "source_url": "https://example.com/sample/followit/oak-r2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2",
+   "benchmark": "formatwise",
+   "score": 77.4,
+   "provenance": "maintainer",
+   "source": "formatwise maintainers",
+   "source_url": "https://example.com/sample/formatwise/oak-r2",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2-distill-32b",
+   "benchmark": "toolrun",
+   "score": 56.0,
+   "provenance": "third_party",
+   "source": "Community report",
+   "source_url": "https://example.com/sample/toolrun/oak-r2-distill-32b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2-distill-32b",
+   "benchmark": "webquest",
+   "score": 58.0,
+   "provenance": "maintainer",
+   "source": "webquest maintainers",
+   "source_url": "https://example.com/sample/webquest/oak-r2-distill-32b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2-distill-32b",
+   "benchmark": "repofix",
+   "score": 52.5,
+   "provenance": "maintainer",
+   "source": "repofix maintainers",
+   "source_url": "https://example.com/sample/repofix/oak-r2-distill-32b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2-distill-32b",
+   "benchmark": "livecode",
+   "score": 59.8,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/livecode/oak-r2-distill-32b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2-distill-32b",
+   "benchmark": "worldqa",
+   "score": 70.6,
+   "provenance": "maintainer",
+   "source": "worldqa maintainers",
+   "source_url": "https://example.com/sample/worldqa/oak-r2-distill-32b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2-distill-32b",
+   "benchmark": "mathbowl",
+   "score": 54.6,
+   "provenance": "third_party",
+   "source": "Community report",
+   "source_url": "https://example.com/sample/mathbowl/oak-r2-distill-32b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2-distill-32b",
+   "benchmark": "gradeschool",
+   "score": 72.0,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/gradeschool/oak-r2-distill-32b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2-distill-32b",
+   "benchmark": "visionbench",
+   "score": 64.6,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/visionbench/oak-r2-distill-32b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2-distill-32b",
+   "benchmark": "docread",
+   "score": 67.6,
+   "provenance": "maintainer",
+   "source": "docread maintainers",
+   "source_url": "https://example.com/sample/docread/oak-r2-distill-32b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2-distill-32b",
+   "benchmark": "needlestack",
+   "score": 61.0,
+   "provenance": "maintainer",
+   "source": "needlestack maintainers",
+   "source_url": "https://example.com/sample/needlestack/oak-r2-distill-32b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2-distill-32b",
+   "benchmark": "multihop",
+   "score": 51.2,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/multihop/oak-r2-distill-32b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2-distill-32b",
+   "benchmark": "followit",
+   "score": 64.5,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/followit/oak-r2-distill-32b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "oak-r2-distill-32b",
+   "benchmark": "formatwise",
+   "score": 71.1,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/formatwise/oak-r2-distill-32b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "birch-coder-33b",
+   "benchmark": "toolrun",
+   "score": 48.8,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/toolrun/birch-coder-33b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "birch-coder-33b",
+   "benchmark": "webquest",
+   "score": 45.5,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/webquest/birch-coder-33b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "birch-coder-33b",
+   "benchmark": "repofix",
+   "score": 58.7,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/repofix/birch-coder-33b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "birch-coder-33b",
+   "benchmark": "livecode",
+   "score": 66.1,
+   "provenance": "independent",
+   "source": "EvalHub",
+   "source_url": "https://example.com/sample/livecode/birch-coder-33b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "birch-coder-33b",
+   "benchmark": "abstractiq",
+   "score": 48.2,
+   "provenance": "maintainer",
+   "source": "abstractiq maintainers",
+   "source_url": "https://example.com/sample/abstractiq/birch-coder-33b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "birch-coder-33b",
+   "benchmark": "worldqa",
+   "score": 58.7,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/worldqa/birch-coder-33b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "birch-coder-33b",
+   "benchmark": "expertqa",
+   "score": 47.3,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/expertqa/birch-coder-33b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "birch-coder-33b",
+   "benchmark": "mathbowl",
+   "score": 48.8,
+   "provenance": "independent",
+   "source": "LabCross",
+   "source_url": "https://example.com/sample/mathbowl/birch-coder-33b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "birch-coder-33b",
+   "benchmark": "gradeschool",
+   "score": 66.0,
+   "provenance": "third_party",
+   "source": "Community report",
+   "source_url": "https://example.com/sample/gradeschool/birch-coder-33b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "birch-coder-33b",
+   "benchmark": "visionbench",
+   "score": 61.3,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/visionbench/birch-coder-33b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "birch-coder-33b",
+   "benchmark": "docread",
+   "score": 55.5,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/docread/birch-coder-33b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "birch-coder-33b",
+   "benchmark": "needlestack",
+   "score": 57.7,
+   "provenance": "independent",
+   "source": "EvalHub",
+   "source_url": "https://example.com/sample/needlestack/birch-coder-33b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "birch-coder-33b",
+   "benchmark": "multihop",
+   "score": 44.9,
+   "provenance": "third_party",
+   "source": "Community report",
+   "source_url": "https://example.com/sample/multihop/birch-coder-33b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "birch-coder-33b",
+   "benchmark": "followit",
+   "score": 62.2,
+   "provenance": "lab",
+   "source": "Ironleaf release notes",
+   "source_url": "https://example.com/sample/followit/birch-coder-33b",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-4-5",
+   "benchmark": "toolrun",
+   "score": 58.0,
+   "provenance": "maintainer",
+   "source": "toolrun maintainers",
+   "source_url": "https://example.com/sample/toolrun/vector-4-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-4-5",
+   "benchmark": "webquest",
+   "score": 62.8,
+   "provenance": "maintainer",
+   "source": "webquest maintainers",
+   "source_url": "https://example.com/sample/webquest/vector-4-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-4-5",
+   "benchmark": "livecode",
+   "score": 74.9,
+   "provenance": "independent",
+   "source": "EvalHub",
+   "source_url": "https://example.com/sample/livecode/vector-4-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-4-5",
+   "benchmark": "logicgrid",
+   "score": 77.4,
+   "provenance": "maintainer",
+   "source": "logicgrid maintainers",
+   "source_url": "https://example.com/sample/logicgrid/vector-4-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-4-5",
+   "benchmark": "worldqa",
+   "score": 68.5,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/worldqa/vector-4-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-4-5",
+   "benchmark": "expertqa",
+   "score": 58.5,
+   "provenance": "maintainer",
+   "source": "expertqa maintainers",
+   "source_url": "https://example.com/sample/expertqa/vector-4-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-4-5",
+   "benchmark": "mathbowl",
+   "score": 64.5,
+   "provenance": "third_party",
+   "source": "Community report",
+   "source_url": "https://example.com/sample/mathbowl/vector-4-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-4-5",
+   "benchmark": "gradeschool",
+   "score": 79.6,
+   "provenance": "maintainer",
+   "source": "gradeschool maintainers",
+   "source_url": "https://example.com/sample/gradeschool/vector-4-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-4-5",
+   "benchmark": "visionbench",
+   "score": 69.7,
+   "provenance": "third_party",
+   "source": "Community report",
+   "source_url": "https://example.com/sample/visionbench/vector-4-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-4-5",
+   "benchmark": "docread",
+   "score": 70.6,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/docread/vector-4-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-4-5",
+   "benchmark": "needlestack",
+   "score": 70.3,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/needlestack/vector-4-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-4-5",
+   "benchmark": "multihop",
+   "score": 57.5,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/multihop/vector-4-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-4-5",
+   "benchmark": "followit",
+   "score": 72.5,
+   "provenance": "maintainer",
+   "source": "followit maintainers",
+   "source_url": "https://example.com/sample/followit/vector-4-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "vector-4-5",
+   "benchmark": "formatwise",
+   "score": 80.8,
+   "provenance": "lab",
+   "source": "Quanta Systems release notes",
+   "source_url": "https://example.com/sample/formatwise/vector-4-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-1-5",
+   "benchmark": "toolrun",
+   "score": 52.6,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/toolrun/solstice-1-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-1-5",
+   "benchmark": "webquest",
+   "score": 49.7,
+   "provenance": "maintainer",
+   "source": "webquest maintainers",
+   "source_url": "https://example.com/sample/webquest/solstice-1-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-1-5",
+   "benchmark": "repofix",
+   "score": 54.2,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/repofix/solstice-1-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-1-5",
+   "benchmark": "livecode",
+   "score": 65.0,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/livecode/solstice-1-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-1-5",
+   "benchmark": "logicgrid",
+   "score": 64.2,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/logicgrid/solstice-1-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-1-5",
+   "benchmark": "worldqa",
+   "score": 61.7,
+   "provenance": "maintainer",
+   "source": "worldqa maintainers",
+   "source_url": "https://example.com/sample/worldqa/solstice-1-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-1-5",
+   "benchmark": "expertqa",
+   "score": 49.1,
+   "provenance": "third_party",
+   "source": "Community report",
+   "source_url": "https://example.com/sample/expertqa/solstice-1-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-1-5",
+   "benchmark": "mathbowl",
+   "score": 47.2,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/mathbowl/solstice-1-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-1-5",
+   "benchmark": "gradeschool",
+   "score": 72.7,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/gradeschool/solstice-1-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-1-5",
+   "benchmark": "docread",
+   "score": 70.4,
+   "provenance": "independent",
+   "source": "EvalHub",
+   "source_url": "https://example.com/sample/docread/solstice-1-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-1-5",
+   "benchmark": "multihop",
+   "score": 55.6,
+   "provenance": "lab",
+   "source": "Helios Labs release notes",
+   "source_url": "https://example.com/sample/multihop/solstice-1-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-1-5",
+   "benchmark": "followit",
+   "score": 66.2,
+   "provenance": "independent",
+   "source": "LabCross",
+   "source_url": "https://example.com/sample/followit/solstice-1-5",
+   "measured_at": "2026-11-01"
+  },
+  {
+   "model": "solstice-1-5",
+   "benchmark": "formatwise",
+   "score": 66.1,
+   "provenance": "maintainer",
+   "source": "formatwise maintainers",
+   "source_url": "https://example.com/sample/formatwise/solstice-1-5",
+   "measured_at": "2026-11-01"
+  }
+ ]
+}
