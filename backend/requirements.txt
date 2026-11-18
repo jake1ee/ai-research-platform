@@ -1,42 +1,19 @@
-# ── Web framework ─────────────────────────────────────────────────────────────
+# Runtime dependencies (see requirements-dev.txt for tooling)
 fastapi==0.115.6
 uvicorn[standard]==0.32.1
-
-# ── Supabase ──────────────────────────────────────────────────────────────────
-supabase==2.10.0             # supabase-py v2 client (Auth + PostgREST + Storage)
-
-# ── Database (kept for SQLAlchemy/Alembic if needed alongside supabase-py) ────
-sqlalchemy==2.0.36
-alembic==1.14.0              # Database migrations
-
-# ── Auth (legacy self-signed JWT – not needed for Supabase Auth flows) ────────
-python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
-
-# ── Settings / env ────────────────────────────────────────────────────────────
-pydantic==2.10.3
+supabase==2.10.0
+pydantic[email]==2.10.3
 pydantic-settings==2.7.0
-pydantic[email]              # For EmailStr validation
-
-# ── LLM execution ─────────────────────────────────────────────────────────────
-litellm==1.55.8              # Unified interface for OpenAI, Anthropic, Gemini, Cohere …
-openai==1.58.1               # Required by LiteLLM for OpenAI calls
-anthropic==0.40.0            # Required by LiteLLM for Anthropic calls
-google-generativeai==0.8.3   # Required by LiteLLM for Gemini calls
-
-# ── Token counting ────────────────────────────────────────────────────────────
-tiktoken==0.8.0              # Fast BPE tokeniser for OpenAI models
-
-# ── JSON schema validation ────────────────────────────────────────────────────
+litellm==1.55.8
+openai==1.58.1
+anthropic==0.40.0
+google-generativeai==0.8.3
+tiktoken==0.8.0
 jsonschema==4.23.0
-
-# ── Async task queue ──────────────────────────────────────────────────────────
-celery[redis]==5.4.0         # Task queue + Redis broker/backend
-redis==5.2.1                 # Redis Python client (also used for output cache)
-
-# ── Billing ───────────────────────────────────────────────────────────────────
+celery[redis]==5.4.0
+redis==5.2.1
 stripe==11.3.0
-
-# ── Utilities ─────────────────────────────────────────────────────────────────
-python-multipart==0.0.20     # Required for FastAPI form data / file uploads
-httpx==0.26.0                # Async HTTP client used internally by LiteLLM
+python-multipart==0.0.20
+httpx==0.26.0
+PyJWT[crypto]==2.10.1
+structlog==24.4.0

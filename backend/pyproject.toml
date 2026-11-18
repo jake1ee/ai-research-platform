@@ -1,0 +1,26 @@
+[project]
+name = "ai-research-platform-api"
+version = "0.2.0"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S", "ASYNC"]
+ignore = ["S101"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+check_untyped_defs = true
+warn_unused_ignores = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-q"

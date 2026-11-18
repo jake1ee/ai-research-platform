@@ -1,0 +1,51 @@
+services:
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build: ./backend
+    env_file: ./backend/.env
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+    ports: ["8000:8000"]
+    depends_on:
+      redis: { condition: service_healthy }
+
+  worker:
+    build: ./backend
+    command: celery -A app.tasks.celery_app worker --loglevel=INFO
+    env_file: ./backend/.env
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+    depends_on:
+      redis: { condition: service_healthy }
+
+  beat:
+    build: ./backend
+    command: celery -A app.tasks.celery_app beat --loglevel=INFO
+    env_file: ./backend/.env
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+    depends_on:
+      redis: { condition: service_healthy }
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}
+    ports: ["3000:3000"]
+    depends_on: [api]
